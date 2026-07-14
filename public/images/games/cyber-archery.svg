@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- Background -->
+  <rect width="400" height="250" fill="url(#bg-grad)" />
+
+  <!-- Grid pattern in background for futuristic cyber vibe -->
+  <g opacity="0.08">
+    <path d="M 15 45 L 385 45 M 15 80 L 385 80 M 15 115 L 385 115 M 15 150 L 385 150 M 15 185 L 385 185" stroke="#ffffff" stroke-width="1" />
+    <path d="M 50 15 L 50 235 M 100 15 L 100 235 M 150 15 L 150 235 M 200 15 L 200 235 M 250 15 L 250 235 M 300 15 L 300 235 M 350 15 L 350 235" stroke="#ffffff" stroke-width="1" />
+  </g>
+
+  <!-- Outer glowing card border -->
+  <rect x="15" y="15" width="370" height="220" rx="16" fill="none" stroke="#ff007f" stroke-width="1.5" opacity="0.3" filter="url(#glow)" />
+
+  <!-- Archery Target (Center at 200, 100) -->
+  <g transform="translate(0, 0)">
+    <!-- Crosshairs background -->
+    <line x1="200" y1="20" x2="200" y2="180" stroke="#ff007f" filter="url(#glow)" stroke-width="0.5" opacity="0.2" stroke-dasharray="4,4" />
+    <line x1="120" y1="100" x2="280" y2="100" stroke="#ff007f" filter="url(#glow)" stroke-width="0.5" opacity="0.2" stroke-dasharray="4,4" />
+
+    <!-- Ring 4: Outer Blue -->
+    <circle cx="200" cy="100" r="75" fill="none" stroke="#00f0ff" filter="url(#glow)" stroke-width="1.5" opacity="0.4" stroke-dasharray="5,3" />
+    
+    <!-- Ring 3: Cyan Ring -->
+    <circle cx="200" cy="100" r="55" fill="none" stroke="#06b6d4" stroke-width="2.5" opacity="0.7" filter="url(#glow)" />
+    
+    <!-- Ring 2: Rose Ring -->
+    <circle cx="200" cy="100" r="35" fill="none" stroke="#ff007f" stroke-width="3" opacity="0.85" filter="url(#glow)" />
+    
+    <!-- Ring 1: Gold/Yellow Bullseye -->
+    <circle cx="200" cy="100" r="15" fill="#eab308" fill-opacity="0.2" stroke="#eab308" stroke-width="4" filter="url(#gold-glow)" />
+    <circle cx="200" cy="100" r="4" fill="#ffffff" filter="url(#gold-glow)" />
+
+    <!-- Cyber Target HUD ticks -->
+    <path d="M 200 15 L 200 25 M 200 175 L 200 185 M 115 100 L 125 100 M 275 100 L 285 100" stroke="#06b6d4" stroke-width="2" filter="url(#glow)" />
+  </g>
+
+  <!-- Glowing Arrow trajectory and Arrow -->
+  <g>
+    <!-- Trajectory Dot Trail -->
+    <line x1="75" y1="15" x2="190" y2="93" stroke="#00f0ff" stroke-width="2" stroke-dasharray="4,8" opacity="0.6" filter="url(#glow)" />
+    
+    <!-- Shaft of the arrow -->
+    <line x1="90" y1="25" x2="195" y2="96" stroke="url(#arrow-grad)" stroke-width="3" filter="url(#glow)" />
+    
+    <!-- Arrow Fletching (Back feathers) -->
+    <path d="M 85 22 L 72 13 L 80 28 Z" fill="#ff007f" filter="url(#glow)" />
+    <path d="M 92 27 L 83 38 L 95 30 Z" fill="#ff007f" filter="url(#glow)" />
+    
+    <!-- Arrowhead embedded in the center -->
+    <polygon points="194,92 201,101 192,103" fill="#ffffff" filter="url(#gold-glow)" />
+  </g>
+
+  <!-- Collision / Spark effects at center -->
+  <g stroke="#ffffff" stroke-width="1.5" filter="url(#gold-glow)">
+    <line x1="200" y1="100" x2="215" y2="88" />
+    <line x1="200" y1="100" x2="212" y2="114" />
+    <line x1="200" y1="100" x2="186" y2="110" />
+    <line x1="200" y1="100" x2="190" y2="86" />
+    <circle cx="218" cy="86" r="1.5" fill="#eab308" />
+    <circle cx="214" cy="116" r="1" fill="#ff007f" />
+    <circle cx="184" cy="112" r="2" fill="#06b6d4" />
+  </g>
+
+  <!-- Title -->
+  
+  <!-- Category Badge -->
+  <rect x="150" y="210" width="100" height="18" rx="9" fill="#ff007f" opacity="0.2"/>
+</svg>

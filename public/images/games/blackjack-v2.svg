@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+  <!-- 背景 -->
+  <rect width="400" height="300" fill="#090d16" />
+  <rect width="380" height="280" x="10" y="10" rx="15" fill="#0f172a" stroke="#39ff14" filter="url(#glow)" stroke-width="1.5" opacity="0.3" />
+
+  <!-- ブラックジャックV2のシミュレーションイラスト -->
+  <g transform="translate(60, 20)">
+    <!-- 画面バウンディング枠 -->
+    <rect width="280" height="140" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" rx="4" />
+
+    <!-- カード1枚目: A (スペード - 左側、やや傾いている) -->
+    <g transform="translate(45, 20) rotate(-10)">
+      <rect width="65" height="95" rx="6" fill="#1e293b" stroke="#ffffff" stroke-width="2.5" filter="url(#glow)" />
+      <!-- スペードマーク (簡易ベクター) -->
+      <path d="M 32.5, 35 C 32.5, 35, 25, 45, 25, 50 C 25, 55, 30, 55, 32.5, 52.5 C 35, 55, 40, 55, 40, 50 C 40, 45, 32.5, 35, 32.5, 35 Z" fill="#ffffff" filter="url(#glow)" />
+      <path d="M 32.5, 48 L 30, 58 L 35, 58 Z" fill="#ffffff" filter="url(#glow)" />
+      <!-- 文字 A -->
+      <text x="12" y="20" font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="extrabold" fill="#ffffff">A</text>
+      <text x="53" y="85" font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="extrabold" fill="#ffffff" text-anchor="end">A</text>
+    </g>
+
+    <!-- カード2枚目: 10 (ダイヤ/ハート - 右側、重ねて表示、やや逆向きに傾いている) -->
+    <g transform="translate(110, 15) rotate(5)">
+      <rect width="65" height="95" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="2.5" filter="url(#glow)" />
+      <!-- ダイヤマーク -->
+      <path d="M 32.5, 35 L 45, 47.5 L 32.5, 60 L 20, 47.5 Z" fill="#ef4444" filter="url(#glow)" />
+      <!-- 文字 J -->
+      <text x="12" y="20" font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="extrabold" fill="#ef4444">J</text>
+      <text x="53" y="85" font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="extrabold" fill="#ef4444" text-anchor="end">J</text>
+    </g>
+
+    <!-- カジノチップ (手前に積み重なっている) -->
+    <!-- チップ1 (金/黄色) -->
+    <g transform="translate(195, 95)">
+      <ellipse cx="25" cy="15" rx="25" ry="12" fill="#1e293b" stroke="url(#gold-grad)" stroke-width="3" filter="url(#glow)" />
+      <ellipse cx="25" cy="15" rx="16" ry="8" fill="none" stroke="url(#gold-grad)" stroke-width="1.5" stroke-dasharray="4, 3" />
+      <text x="25" y="18" font-family="system-ui" font-size="10" font-weight="extrabold" fill="url(#gold-grad)" text-anchor="middle">100</text>
+    </g>
+
+    <!-- チップ2 (シアン、少し重ねる) -->
+    <g transform="translate(170, 105)">
+      <ellipse cx="20" cy="12" rx="20" ry="10" fill="#1e293b" stroke="#06b6d4" stroke-width="3" filter="url(#glow)" />
+      <ellipse cx="20" cy="12" rx="12" ry="6" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="3, 2" />
+      <text x="20" y="15" font-family="system-ui" font-size="8" font-weight="extrabold" fill="#06b6d4" text-anchor="middle">25</text>
+    </g>
+  </g>
+
+  <!-- タイトル・カテゴリ -->
+</svg>

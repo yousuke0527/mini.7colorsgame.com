@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content';
+import PlayPage from '../../play/[id].astro';
+
+export async function getStaticPaths() {
+  const games = await getCollection('games');
+  return games.map((game) => ({ params: { id: game.slug }, props: { game } }));
+}
+
+const { game } = Astro.props;
+---
+<PlayPage game={game} />

@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+  <!-- 背景 -->
+  <rect width="400" height="300" fill="#090d16" />
+  <rect width="380" height="280" x="10" y="10" rx="15" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" opacity="0.3" />
+
+  <!-- ワードサーチV2のシミュレーションイラスト -->
+  <g transform="translate(100, 20)">
+    <!-- 画面バウンディング枠 -->
+    <rect width="200" height="140" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" rx="4" />
+
+    <!-- 文字グリッド背景 -->
+    <g font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="bold" fill="#475569" text-anchor="middle">
+      <!-- 行0 -->
+      <text x="25" y="25">N</text>
+      <text x="62.5" y="25">E</text>
+      <text x="100" y="25">O</text>
+      <text x="137.5" y="25">N</text>
+      <text x="175" y="25">G</text>
+
+      <!-- 行1 -->
+      <text x="25" y="55">F</text>
+      <text x="62.5" y="55">I</text>
+      <text x="100" y="55">N</text>
+      <text x="137.5" y="55">D</text>
+      <text x="175" y="55">X</text>
+
+      <!-- 行2 -->
+      <text x="25" y="85">C</text>
+      <text x="62.5" y="85">Y</text>
+      <text x="100" y="85">B</text>
+      <text x="137.5" y="85">E</text>
+      <text x="175" y="85">R</text>
+
+      <!-- 行3 -->
+      <text x="25" y="115">P</text>
+      <text x="62.5" y="115">A</text>
+      <text x="100" y="115">T</text>
+      <text x="137.5" y="115">H</text>
+      <text x="175" y="115">Q</text>
+    </g>
+
+    <!-- ワードハイライト1: 'CYBER' (パープルネオン - 横方向) -->
+    <!-- 背景カプセル -->
+    <rect x="12" y="70" width="176" height="20" rx="10" fill="#a855f7" opacity="0.25" stroke="#a855f7" stroke-width="2" filter="url(#glow)" />
+    <!-- 明るく光る文字 -->
+    <g font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="extrabold" fill="#ffffff" text-anchor="middle" filter="url(#glow)">
+      <text x="25" y="85">C</text>
+      <text x="62.5" y="85">Y</text>
+      <text x="100" y="85">B</text>
+      <text x="137.5" y="85">E</text>
+      <text x="175" y="85">R</text>
+    </g>
+
+    <!-- ワードハイライト2: 'FIND' (シアンネオン - 横方向) -->
+    <rect x="12" y="40" width="138" height="20" rx="10" fill="#06b6d4" opacity="0.25" stroke="#06b6d4" stroke-width="2" filter="url(#glow)" />
+    <g font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="extrabold" fill="#ffffff" text-anchor="middle" filter="url(#glow)">
+      <text x="25" y="55">F</text>
+      <text x="62.5" y="55">I</text>
+      <text x="100" y="55">N</text>
+      <text x="137.5" y="55">D</text>
+    </g>
+
+    <!-- ワードハイライト3: 'NEON' (第一行 - 白/イエロー) -->
+    <rect x="12" y="10" width="138" height="20" rx="10" fill="#eab308" opacity="0.15" stroke="#eab308" stroke-width="1.5" />
+    <g font-family="'Outfit', system-ui, sans-serif" font-size="14" font-weight="extrabold" fill="#eab308" text-anchor="middle">
+      <text x="25" y="25">N</text>
+      <text x="62.5" y="25">E</text>
+      <text x="100" y="25">O</text>
+      <text x="137.5" y="25">N</text>
+    </g>
+  </g>
+
+  <!-- タイトル・カテゴリ -->
+</svg>

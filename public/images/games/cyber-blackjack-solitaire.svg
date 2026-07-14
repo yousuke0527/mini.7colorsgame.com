@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="title desc">
+  <title id="title">BLACKJACK SOLITAIRE</title><desc id="desc">Neon game thumbnail for cyber-blackjack-solitaire</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#020617"/><stop offset=".55" stop-color="#11104a"/><stop offset="1" stop-color="#071d35"/></linearGradient><radialGradient id="glow"><stop stop-color="#8b5cf6" stop-opacity=".42"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></radialGradient></defs>
+  <rect width="640" height="400" rx="28" fill="url(#bg)"/><circle cx="320" cy="220" r="220" fill="url(#glow)"/><path d="M0 70h640M0 330h640" stroke="#22d3ee" stroke-opacity=".12"/><g><g transform='rotate(-8 320 220)'><rect x='225' y='125' width='145' height='190' rx='18' fill='#fff' stroke='#f472d0' stroke-width='7'/><text x='252' y='175' font-size='44' font-weight='900' fill='#e11d48'>A</text><path d='M296 220l25-32 25 32-25 35z' fill='#e11d48'/></g><rect x='350' y='142' width='120' height='165' rx='16' fill='#111827' stroke='#22d3ee' stroke-width='7'/></g>
+  <rect x="24" y="24" width="592" height="352" rx="24" fill="none" stroke="#67e8f9" stroke-opacity=".28"/>
+</svg>

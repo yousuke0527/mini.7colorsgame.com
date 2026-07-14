@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+  <rect width="400" height="300" fill="#090d16" />
+  <rect width="380" height="280" x="10" y="10" rx="15" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" opacity="0.3" />
+
+  <!-- 防衛基地と空襲 -->
+  <g transform="translate(40, 30)">
+    <!-- ミサイルトラック (赤) -->
+    <line x1="20" y1="0" x2="80" y2="100" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,3" />
+    <circle cx="80" cy="100" r="3" fill="#ef4444" filter="url(#glow)" />
+    
+    <line x1="300" y1="0" x2="200" y2="120" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,3" />
+    <circle cx="200" cy="120" r="3" fill="#ef4444" filter="url(#glow)" />
+
+    <!-- 迎撃ミサイルトラック (緑) -->
+    <line x1="160" y1="140" x2="130" y2="80" stroke="#39ff14" filter="url(#glow)" stroke-width="1.5" />
+    <circle cx="130" cy="80" r="4" fill="#39ff14" filter="url(#glow)" />
+
+    <!-- 防衛パルス (爆発円) -->
+    <circle cx="130" cy="80" r="35" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" stroke-width="2.5" filter="url(#glow)" />
+    <circle cx="130" cy="80" r="15" fill="none" stroke="#ffffff" stroke-width="1.5" filter="url(#glow)" />
+
+    <!-- 迎撃成功の閃光 -->
+    <path d="M 70,110 L 90,90 M 70,90 L 90,110" stroke="#ef4444" stroke-width="2" />
+
+    <!-- 地上の基地 (シアン) -->
+    <rect x="40" y="140" width="30" height="10" fill="#00ffff" rx="2" filter="url(#glow)" />
+    <rect x="145" y="140" width="30" height="10" fill="#00ffff" rx="2" filter="url(#glow)" />
+    <rect x="250" y="140" width="30" height="10" fill="#00ffff" rx="2" filter="url(#glow)" />
+  </g>
+
+  <!-- タイトル -->
+</svg>

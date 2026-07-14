@@ -1,0 +1,2538 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import AdSense from '../../components/AdSense.astro';
+import { simpleGameDescription, simpleGameTitle } from '../../lib/gameCopy';
+import { getEndlessClearTarget } from '../../lib/endlessClearTargets';
+
+export async function getStaticPaths() {
+  const games = await getCollection('games');
+  return games.map(game => ({
+    params: { id: game.slug },
+    props: { game },
+  }));
+}
+
+const { game } = Astro.props;
+const { title, description, category, difficulty } = game.data;
+
+const lang = Astro.url.pathname.startsWith('/en/') || Astro.url.searchParams.get('lang') === 'en' ? 'en' : 'ja';
+
+// 主要ゲームの英語翻訳テーブル
+const gameTranslations: Record<string, { titleEn: string; descEn: string; controlsEn: string[] }> = {
+  "cyber-typing-speed": {
+    titleEn: "Cyber Typing Speed Test",
+    descEn: "Test your typing speed and accuracy under pressure. Type cybersecurity words as quickly as possible within a 60-second limit.",
+    controlsEn: [
+      "Click the game board to focus and start the countdown timer.",
+      "Type the letters matching the glowing word displayed in the center.",
+      "Track your WPM (Words Per Minute) and Accuracy percentage dynamically."
+    ]
+  },
+  "cyber-marble-run": {
+    titleEn: "Cyber Marble Run",
+    descEn: "Create paths using slope blocks to guide a falling energy sphere safely to the green receiver core.",
+    controlsEn: [
+      "Select either slope / or slope \\ from the bottom tool selection bar.",
+      "Click any empty cell on the grid to place the selected slope block.",
+      "Press the LAUNCH BEAM button to release the physical sphere and watch its trajectory.",
+      "Lead the ball to the green glowing goal core to advance levels."
+    ]
+  },
+  "cyber-word-snake": {
+    titleEn: "Cyber Word Snake",
+    descEn: "Steer the snake to consume letters scattered on the matrix. Letters must be collected in the correct spelling order of the target word.",
+    controlsEn: [
+      "Use arrow keys or WASD to navigate the digital snake.",
+      "Look at the target word shown on the top bar and eat letters in the correct sequence.",
+      "Hitting walls, your own tail, or incorrect letters results in a system crash."
+    ]
+  },
+  "cyber-defuse-bomb": {
+    titleEn: "Cyber Defuse Bomb",
+    descEn: "Defuse a digital time bomb before the clock hits zero. Solve three progressive security modules under time pressure.",
+    controlsEn: [
+      "Module 1 (Wire Cut): Follow instruction text and click on the wire with the specified neon color.",
+      "Module 2 (Memory Keypad): Memorize the flashing pattern sequence and repeat it accurately.",
+      "Module 3 (Frequency Oscilloscope): Click and drag the cyan frequency slider until your blue wave matches the red target wave."
+    ]
+  },
+  "cyber-binary-tetris": {
+    titleEn: "Cyber Binary Tetris",
+    descEn: "Arrange falling '0' and '1' blocks. Completing rows clears them and awards points based on the binary numerical value of the row.",
+    controlsEn: [
+      "Use Left/Right arrow keys (or A/D keys) to move the falling binary block.",
+      "Press Up arrow key, W, or Spacebar to flip the block value between 0 and 1.",
+      "Press Down arrow key or S key to soft drop the block faster.",
+      "Complete a row to parse its binary sequence and score points."
+    ]
+  },
+  "cyber-logic-grid": {
+    titleEn: "Cyber Logic Grid Solver",
+    descEn: "Read security clues and deduct the OS and Port configurations for Server A, B, and C with no overlaps.",
+    controlsEn: [
+      "Analyze the three security clue statements displayed on the left panel.",
+      "Click the OS and PORT buttons on each server card on the right to toggle through options.",
+      "Click DECIPHER LOGS to verify your configuration once all servers are configured."
+    ]
+  },
+  "cyber-pattern-reconstruction": {
+    titleEn: "Cyber Pattern Reconstruction",
+    descEn: "Rotate 2x2 grid quadrants to mirror the designated target pattern on your active workspace grid.",
+    controlsEn: [
+      "Identify the objective layout on the left TARGET PATTERN grid.",
+      "Click the refresh rotation buttons (↻) in the center of the workspace to spin its 2x2 subgroups.",
+      "Match the target exactly with minimum rotations to clear the stage."
+    ]
+  },
+  "cyber-gravity-escape": {
+    titleEn: "Cyber Gravity Escape",
+    descEn: "Navigate a recovery spaceship through strong orbital gravitation. Collect all energy cores and warp out.",
+    controlsEn: [
+      "Click and hold or drag on the canvas to fire thrusters in the direction of the cursor.",
+      "Avoid hitting the perimeter walls or the central red singularity attractor.",
+      "Acquire all three yellow crystals to open the green portal, then fly into it to escape."
+    ]
+  },
+  "cyber-hex-memory": {
+    titleEn: "Cyber Hexadecimal Memory",
+    descEn: "Flip cards and match decimal values with their corresponding hexadecimal values in this encryption memory game.",
+    controlsEn: [
+      "Click face-down cards to flip them over.",
+      "Pair a decimal number card (e.g. 15) with its hex counterpart (e.g. 0x0F) to clear them.",
+      "Deduce all cryptography pairings with the fewest flips possible."
+    ]
+  },
+  "cyber-arithmetic-progression": {
+    titleEn: "Cyber Arithmetic Progression",
+    descEn: "Search the matrix and select three adjacent numbers that form an arithmetic progression (equal difference sequence).",
+    controlsEn: [
+      "Click up to three numbers on the grid to select them.",
+      "Form a sequence where numbers have a constant difference (e.g. 2 -> 5 -> 8 or 20 -> 15 -> 10).",
+      "Correct sequences clear blocks and drop new ones. Achieve maximum score within 60 seconds."
+    ]
+  },
+  "cyber-rebound": {
+    titleEn: "Cyber Rebound",
+    descEn: "Place bounce reflectors on the grid to bend energy beams and guide them to the receiver core.",
+    controlsEn: [
+      "Select a reflector type (/ or \\) from the bottom panel.",
+      "Click any empty grid cell to place or toggle the reflector.",
+      "Press the LAUNCH BEAM button to emit energy and charge the target core."
+    ]
+  },
+  "cyber-balance-board": {
+    titleEn: "Cyber Balance Board",
+    descEn: "Tilt the platform left/right to balance the bouncing neon sphere while dodging hazards.",
+    controlsEn: [
+      "Use Left/Right arrows (or A/D keys) or tap/click screen sides to tilt.",
+      "Keep the neon sphere bouncing on the platform, preventing it from falling off.",
+      "Avoid red falling hazard particles to survive as long as possible."
+    ]
+  },
+  "cyber-tripeaks-solitaire": {
+    titleEn: "Cyber TriPeaks Solitaire",
+    descEn: "Clear three peaks of cards by selecting cards that are one rank higher or lower than your open pile card.",
+    controlsEn: [
+      "Click cards on the board that are +/- 1 rank from the open card (e.g. 4 or 6 for a 5; Aces and Kings connect).",
+      "If no moves are possible, click the bottom-right draw pile to draw a new card.",
+      "Clear all cards in the three peaks to win."
+    ]
+  },
+  "cyber-laser-reflex": {
+    titleEn: "Cyber Laser Reflex",
+    descEn: "Deploy shields in four directions at the exact rhythm to absorb incoming high-speed laser beams.",
+    controlsEn: [
+      "Use Arrow Keys (Up/Down/Left/Right) or tap screen edges to deploy directional shields.",
+      "Deploy the shield exactly as the laser hits the outer target circle.",
+      "Failing to shield in time damages the core shield. Game over if shield reaches 0%."
+    ]
+  },
+  "cyber-netwalk": {
+    titleEn: "Cyber Netwalk",
+    descEn: "Rotate network links to connect all workstation nodes to the central power core.",
+    controlsEn: [
+      "Click any cable tile to rotate it 90 degrees clockwise.",
+      "Connect all client laptops to the central circular core.",
+      "All nodes must be powered (glowing cyan) to clear the network level."
+    ]
+  },
+  "cyber-eleven": {
+    titleEn: "Cyber Eleven Puzzle",
+    descEn: "Select pairs that add up to 11, or J-Q-K triplets from the grid to purge all cards.",
+    controlsEn: [
+      "Click cards to select/deselect them (up to 3 cards).",
+      "Select two cards summing to 11 (e.g. Ace & 10, 5 & 6) OR a group of three cards containing J, Q, K to clear them.",
+      "Clear all cards in the board and draw deck to achieve victory."
+    ]
+  },
+  "cyber-speed-card": {
+    titleEn: "Cyber Speed Card",
+    descEn: "Discard cards +/- 1 in value onto central piles in real-time. Deplete your hands before the cyber AI does.",
+    controlsEn: [
+      "Click or drag cards from your bottom tray onto either of the center piles if it's +/- 1 in rank.",
+      "The AI plays cards in real-time. Speed is crucial!",
+      "If both players stall, new base cards are drawn automatically. Get rid of your cards first to win."
+    ]
+  },
+  "cyber-physics-line": {
+    titleEn: "Cyber Gravity Line",
+    descEn: "Draw glowing solid vector lines to guide falling neon spheres into the gravity warp portals.",
+    controlsEn: [
+      "Click and drag to draw lines on the grid canvas.",
+      "Click the green START button to release the ball from the emitter under gravity.",
+      "Guide the ball into the portal. If you miss, click RESET to clear the ball and redraw."
+    ]
+  },
+  "cyber-penalty-shootout": {
+    titleEn: "Cyber Penalty Shootout",
+    descEn: "Take penalty kicks as a striker and save them as a goalie in this glowing 5-round shootout.",
+    controlsEn: [
+      "Kicking (Odd turns): Click one of the three targets (Left/Center/Right) to aim and shoot.",
+      "Defending (Even turns): Anticipate the AI's kick and click Left/Center/Right dive buttons.",
+      "Compete in a 5-round shootout. Most goals wins the match."
+    ]
+  },
+  "color-sort": {
+    titleEn: "Color Sort Tubes",
+    titleEn: "Color Sort Tubes",
+    descEn: "Sort colored neon balls inside test tubes until all identical colors align.",
+    controlsEn: [
+      "Select a tube to pick up the top ball (white border glows).",
+      "Select another tube to drop the ball.",
+      "Only place identical colors together. Empty tubes can hold any color.",
+      "Sort all colors in their respective tubes to win."
+    ]
+  },
+  "connect4": {
+    titleEn: "Cyber Connect Four",
+    descEn: "Drop glowing chips. Align four chips vertically, horizontally, or diagonally to win.",
+    controlsEn: [
+      "Click on a column to drop your neon chip.",
+      "Alternate turns with the AI player.",
+      "Connect exactly 4 chips of your color to win."
+    ]
+  },
+  "cyber-abacus-v2": {
+    titleEn: "Cyber Abacus Speed-Read",
+    descEn: "Speed-read the glowing digital abacus (soroban) beads and pick the correct number.",
+    controlsEn: [
+      "Read the represented number on the abacus.",
+      "Top beads represent 5, bottom beads represent 1.",
+      "Select the correct option from the bottom buttons."
+    ]
+  },
+  "nonogram-lite": {
+    titleEn: "Cyber Nonogram",
+    descEn: "Solve classic logic picture cross puzzles with 8 beautiful levels.",
+    controlsEn: [
+      "Click grid slots to paint them black (glow).",
+      "Observe top and left numeric hints representing consecutive blocks.",
+      "Complete the target pixel art to clear levels."
+    ]
+  },
+  "blackjack": {
+    titleEn: "Cyber Blackjack",
+    descEn: "Classic casino card game Blackjack with glowing neon interface.",
+    controlsEn: [
+      "Hit to request another card.",
+      "Stand to keep your current cards.",
+      "Reach closer to 21 than the dealer without going over."
+    ]
+  },
+  "blackjack-v2": {
+    titleEn: "Blackjack V2 Pro",
+    descEn: "Advanced casino simulator Blackjack with interactive neon tables.",
+    controlsEn: [
+      "Double down or Split when eligible.",
+      "Try to beat the dealer with optimal basic strategy.",
+      "Win chips with premium payouts."
+    ]
+  },
+  "sudoku": {
+    titleEn: "Cyber Sudoku",
+    descEn: "Futuristic Sudoku puzzles with three distinct difficulties.",
+    controlsEn: [
+      "Select an empty grid square.",
+      "Click number buttons to input digits.",
+      "Fill 9x9 board conforming to Sudoku rules."
+    ]
+  },
+  "tetris": {
+    titleEn: "Tetris Blocks",
+    descEn: "Classic block puzzle Tetris. Rotate and drop tetrominos to clear full lines.",
+    controlsEn: [
+      "Use arrow keys or swipe to shift blocks.",
+      "Rotate shapes to fit tightly together.",
+      "Form full horizontal lines to clear and score."
+    ]
+  },
+  "minesweeper": {
+    titleEn: "Cyber Minesweeper",
+    descEn: "Classic logic board game Minesweeper with futuristic neon glow.",
+    controlsEn: [
+      "Click to reveal safe grid tiles.",
+      "Long-press/right-click to place red warning flags.",
+      "Clear all safe tiles without hitting mines."
+    ]
+  },
+  "solitaire": {
+    titleEn: "Cyber Solitaire",
+    descEn: "Classic Klondike Solitaire card puzzle with neon deck designs.",
+    controlsEn: [
+      "Drag cards to stack in descending colors.",
+      "Move cards to top foundation slots by suit.",
+      "Draw cards from the stockpile."
+    ]
+  },
+  "snake": {
+    titleEn: "Cyber Snake Game",
+    descEn: "Classic Snake retro game with neon food particles and high speed.",
+    controlsEn: [
+      "Use arrow keys or touch swipe to steer.",
+      "Eat cyan energy particles to grow.",
+      "Do not run into walls or your own tail."
+    ]
+  },
+  "cyber-lights-out": {
+    titleEn: "Cyber Lights Out",
+    descEn: "A classic electronic puzzle game where clicking a node toggles it and its neighbors. Stabilize the grid matrix by turning off all lights.",
+    controlsEn: [
+      "Click/tap a grid node to toggle it and its adjacent neighbors (up, down, left, right).",
+      "Turn off all nodes in the grid to clear the level.",
+      "Try to solve the puzzle in as few moves as possible."
+    ]
+  },
+  "cyber-lander": {
+    titleEn: "Cyber Lander",
+    descEn: "Navigate gravity and momentum to safely land on the neon platform before fuel runs out.",
+    controlsEn: [
+      "Press Up Arrow or W to fire main thruster.",
+      "Press Left/Right Arrow or A/D to rotate the ship.",
+      "Land safely on the glowing landing pad at a low velocity and upright angle before running out of fuel."
+    ]
+  },
+  "neon-match3": {
+    titleEn: "Neon Match 3",
+    descEn: "A vibrant 60-second time-attack match-3 puzzle game. Swap gems to align three or more matching colors and score massive combos.",
+    controlsEn: [
+      "Click/tap a gem, then click an adjacent gem to swap them.",
+      "Match 3 or more identical gems horizontally or vertically to clear them.",
+      "Cascade matches will award bonus points and increase your combo multiplier."
+    ]
+  },
+  "cyber-flood": {
+    titleEn: "Cyber Flood",
+    descEn: "Flood the grid with color starting from the top-left tile. Try to unify the grid colors within 25 moves.",
+    controlsEn: [
+      "Click/tap the color buttons at the bottom to flood the top-left area with a new color.",
+      "Adjacent tiles matching the new color will merge into your active zone.",
+      "Unify all tiles to a single color within 25 moves to win."
+    ]
+  },
+  "cyber-sokoban": {
+    titleEn: "Cyber Sokoban",
+    descEn: "Guide your drone to push neon energy cores onto their target ports.",
+    controlsEn: [
+      "Use arrow keys or WASD to move (or tap virtual D-pad buttons).",
+      "Move adjacent to a green core and move towards it to push it.",
+      "Place all cores on red target sockets to clear the level.",
+      "You cannot pull cores, and cannot push more than one core at a time."
+    ]
+  },
+  "cyber-mini-golf": {
+    titleEn: "Cyber Mini Golf",
+    descEn: "Aim, pull back, and launch your golf ball into the red neon cup.",
+    controlsEn: [
+      "Click and drag near the ball to pull back and aim (opposite to launch direction).",
+      "Release to shoot the ball. Drag distance controls the power.",
+      "Bounce off walls and avoid obstacles to sink the ball in minimal strokes.",
+      "Complete all 3 holes to win."
+    ]
+  },
+  "cyber-copter": {
+    titleEn: "Cyber Copter",
+    descEn: "Navigate a glowing copter through a narrow neon cavern filled with obstacles.",
+    controlsEn: [
+      "Hold Space, Click, or Tap to fly up.",
+      "Release to descend.",
+      "Avoid crashing into the ceiling, ground, or moving neon obstacles.",
+      "See how far you can travel to set a high score."
+    ]
+  },
+  "cyber-maze": {
+    titleEn: "Neon Labyrinth",
+    descEn: "Navigate through a dynamically generated neon maze to collect the key and reach the exit portal.",
+    controlsEn: [
+      "Use Arrow keys, WASD, or virtual D-pad to move the player core.",
+      "Collect the yellow key to unlock the portal.",
+      "Reach the pink glowing exit portal in the shortest time."
+    ]
+  },
+  "cyber-defender": {
+    titleEn: "Cyber Defender",
+    descEn: "Protect your neon energy shields from incoming cyber meteors by creating tactical pulse explosions.",
+    controlsEn: [
+      "Click or Tap on the screen to trigger a defensive pulse explosion.",
+      "The blast wave will detonate any meteors inside its radius.",
+      "Chain explosions together to score combo points.",
+      "Do not let the meteors destroy all three bottom energy shields."
+    ]
+  },
+  "cyber-hexagon": {
+    titleEn: "Cyber Hexagon",
+    descEn: "Orbit around the central core and dodge incoming contracting hexagonal wall patterns in this high-speed survival action game.",
+    controlsEn: [
+      "Use Left/Right Arrow keys (or tap Left/Right screen sides) to orbit.",
+      "Squeeze through the gaps of incoming hexagonal walls.",
+      "Survive as long as you can. Speed increases over time."
+    ]
+  },
+  "cyber-pinball": {
+    titleEn: "Cyber Pinball",
+    descEn: "A neon-infused cyber pinball machine. Control the flippers to keep the ball in play and hit bumpers for high scores.",
+    controlsEn: [
+      "Left Arrow or A key to control left flipper (or tap left screen).",
+      "Right Arrow or D key to control right flipper (or tap right screen).",
+      "Down Arrow or S key to launch ball.",
+      "Hit neon bumpers and targets to rack up points."
+    ]
+  },
+  "cyber-tower-defense": {
+    titleEn: "Cyber Tower Defense",
+    descEn: "Protect your core against invading malware. Place and upgrade defense nodes along the firewall grid path.",
+    controlsEn: [
+      "Click empty grid cells to build defense nodes (Laser / Slow).",
+      "Click built towers to upgrade their firing speed and damage.",
+      "Malware reaching the core reduces HP.",
+      "Survive all malware waves before core HP drops to zero."
+    ]
+  },
+  "cyber-asteroids": {
+    titleEn: "Cyber Asteroids",
+    descEn: "Steer your spaceship in 360 degrees and shoot down oncoming cyber asteroids. Dodge them and control momentum to survive!",
+    controlsEn: [
+      "Use Left/Right Arrow or A/D to rotate ship.",
+      "Press Up Arrow or W to fire engine thrusters (momentum applied).",
+      "Press Spacebar to fire laser beams.",
+      "Shooting neon asteroids splits them into smaller fragments.",
+      "Colliding with asteroids damages shield. If shield drops to 0, it's Game Over."
+    ]
+  },
+  "cyber-mastermind": {
+    titleEn: "Cyber Mastermind",
+    descEn: "Decode the secret 4-color passcode. Use feedback pins indicating exact color + position matches (Hit) and color-only matches (Blow).",
+    controlsEn: [
+      "Select a color peg from the bottom palette.",
+      "Click on an empty slot of the active row to place the peg.",
+      "Fill all 4 slots and press the CHECK button to evaluate your guess.",
+      "White pin indicates correct color and position (Hit); Grey indicates correct color but wrong position (Blow).",
+      "Decode the correct passcode within 10 attempts to win."
+    ]
+  },
+  "cyber-light-cycles": {
+    titleEn: "Cyber Light Cycles",
+    descEn: "Steer your light cycle on a grid to block and trap the opponent AI, while avoiding trails and outer borders.",
+    controlsEn: [
+      "Use Arrow keys or WASD to change direction of your blue cycle.",
+      "Crashing into your own trail, the AI's trail, or the outer wall results in a crash.",
+      "Force the red AI cycle to crash to claim victory."
+    ]
+  },
+  "cyber-air-hockey": {
+    titleEn: "Cyber Air Hockey",
+    descEn: "Play fast-paced cyber air hockey against a defensive AI. Hit the puck into the opponent's goal to win.",
+    controlsEn: [
+      "Move mouse or drag touch to control your green mallet.",
+      "Your mallet cannot pass the center dividing line.",
+      "Strike the pink puck to shoot it into the red opponent goal on the right.",
+      "First player to score 7 points wins the match."
+    ]
+  },
+  "cyber-plinko": {
+    titleEn: "Cyber Plinko",
+    descEn: "Drop balls down a peg pyramid to score multiplier rewards. Reinvest points to drop multiple balls!",
+    controlsEn: [
+      "Click or tap at the top of the board to drop a ball (costs 10 points).",
+      "Balls bounce off pegs and fall into slots at the bottom.",
+      "Collect points based on multipliers (x0.2 to x5.0).",
+      "If you run out of score, a free 50-point reload is granted once all balls exit."
+    ]
+  },
+  "cyber-peg-solitaire": {
+    titleEn: "Cyber Peg Solitaire",
+    descEn: "A classic logic board puzzle. Jump pegs over adjacent ones to remove them, aiming to leave exactly one in the center.",
+    controlsEn: [
+      "Click a blue peg to select it (white border glows).",
+      "Click an empty slot 2 tiles away orthogonally to jump over and remove the intermediate peg.",
+      "The game ends when no more valid moves are available.",
+      "Aim to leave only one peg in the exact center for a perfect score."
+    ]
+  },
+  "cyber-yacht": {
+    titleEn: "Cyber Yacht",
+    descEn: "Roll 5 dice and choose categories on the scoreboard to maximize your total score. Go for a Yacht (5 of a kind)!",
+    controlsEn: [
+      "Click the ROLL button to shake and roll 5 dice (up to 3 times per turn).",
+      "Click dice to keep them from rolling on subsequent rolls.",
+      "Hover over empty score categories on the right to preview scores.",
+      "Click an empty category to lock in the score for that round. All 12 columns must be filled."
+    ]
+  },
+  "cyber-checkers": {
+    titleEn: "Cyber Checkers",
+    descEn: "Play classic checkers (draughts) on a 3D-feeling neon board against AI. Move diagonally and jump to capture.",
+    controlsEn: [
+      "Click your blue piece to select it, then click a green-highlighted cell to move.",
+      "Jump over opponent red pieces diagonally to capture them.",
+      "Reaching the opposite end promotes your piece to a King, allowing backward movement.",
+      "Capture all opponent pieces or block them from moving to win."
+    ]
+  },
+  "cyber-chimp-test": {
+    titleEn: "Cyber Chimp Test",
+    descEn: "Memorize the locations of numbers. Once you click 1, they hide, and you must select them in ascending order.",
+    controlsEn: [
+      "Memorize the numbers shown on the card grid.",
+      "Click 1 to hide all numbers on the board.",
+      "Select the hidden cards in ascending order (1, 2, 3, etc.).",
+      "Clicking the wrong card yields a strike. Three strikes locks out the system.",
+      "Clearing levels increases the amount of numbers to memorize."
+    ]
+  },
+  "cyber-tower-climber": {
+    titleEn: "Cyber Tower Climber",
+    descEn: "Climb up neon platforms while avoiding falling off the bottom of the auto-scrolling screen.",
+    controlsEn: [
+      "Use Left/Right Arrow or A/D to move horizontally.",
+      "Press Space, Up Arrow, or W to jump.",
+      "Leap across platforms to climb higher.",
+      "Collect green battery packs to earn bonus score.",
+      "The screen auto-scrolls upwards. Don't fall off the bottom!"
+    ]
+  },
+  "cyber-raycast-3d": {
+    titleEn: "Cyber Raycast 3D",
+    descEn: "Navigate a retro-futuristic 3D neon maze from a first-person perspective. Find the pink exit portal before time runs out.",
+    controlsEn: [
+      "Press Up Arrow or W to move forward.",
+      "Press Down Arrow or S to move backward.",
+      "Press Left Arrow or A to rotate left.",
+      "Press Right Arrow or D to rotate right.",
+      "Reach the glowing pink portal to escape the maze."
+    ]
+  },
+  "cyber-hextris": {
+    titleEn: "Cyber Hextris",
+    descEn: "Rotate the central hexagon to catch falling colored bars. Align three or more matching colors to clear them.",
+    controlsEn: [
+      "Press Left Arrow or A to rotate the hexagon counter-clockwise.",
+      "Press Right Arrow or D to rotate the hexagon clockwise.",
+      "Stack incoming color bars on the hexagon sides.",
+      "Align three matching colors adjacently to clear and score."
+    ]
+  },
+  "cyber-highway": {
+    titleEn: "Cyber Highway",
+    descEn: "Race down a retro-future neon highway. Dodge red threat obstacles and collect energy packs to recharge.",
+    controlsEn: [
+      "Press Left Arrow or A to switch lanes left.",
+      "Press Right Arrow or D to switch lanes right.",
+      "Dodge oncoming red cyber cars.",
+      "Collect blue energy cells to replenish fuel and score bonus points."
+    ]
+  },
+  "cyber-catcher": {
+    titleEn: "Cyber Catcher",
+    descEn: "Catch falling neon energy particles. Align the color of your tray with the particles to secure energy.",
+    controlsEn: [
+      "Move the mouse or swipe left/right to move the tray.",
+      "Press Space or click/tap to toggle the tray color between Blue and Green.",
+      "Match the tray color with falling particles. Catching hazards (red) or wrong colors damages shield."
+    ]
+  },
+  "cyber-bowling": {
+    titleEn: "Cyber Bowling",
+    descEn: "Aim, pull, and launch your bowling ball down a neon lane. Knock down all 10 pins.",
+    controlsEn: [
+      "Click/drag back on the ball to aim (slingshot controls) and release to roll.",
+      "Drag the slider at the bottom of the lane to adjust your starting position.",
+      "Knock down all 10 pins at the far end of the lane."
+    ]
+  },
+  "cyber-ultimate-tictactoe": {
+    titleEn: "Ultimate Tic-Tac-Toe",
+    descEn: "Play Tic-Tac-Toe nested in a 9x9 grid. Your move dictates which sub-grid the AI plays in next.",
+    controlsEn: [
+      "Click empty cells to place your X mark.",
+      "Your placement decides which sub-grid the AI must play in next.",
+      "Win three mini-grids in a row to win the global board."
+    ]
+  },
+  "cyber-math-link": {
+    titleEn: "Cyber Math Link",
+    descEn: "Connect adjacent number cells to sum up to the target value. Beat the ticking clock.",
+    controlsEn: [
+      "Drag through adjacent numbers to link them.",
+      "Release when the sum matches the target display at the top.",
+      "Clearing blocks regenerates the grid. Match as many targets as you can before time runs out."
+    ]
+  },
+  "cyber-minesweeper-hex": {
+    titleEn: "Cyber Minesweeper Hex",
+    descEn: "A hexagonal Minesweeper puzzle. Scan 6 directions to isolate logic mines.",
+    controlsEn: [
+      "Left-click to reveal safe cells.",
+      "Right-click to flag mines.",
+      "Use the bottom button to toggle between OPEN and FLAG modes on touchscreens."
+    ]
+  },
+  "cyber-helix": {
+    titleEn: "Cyber Helix",
+    descEn: "Rotate the helix tower to guide the bouncing ball through the platform gaps down to the bottom floor.",
+    controlsEn: [
+      "Press Left/Right Arrow or A/D to rotate the tower (or drag horizontally).",
+      "Let the ball fall through platform gaps to descend.",
+      "Avoid red danger zones. Land safely on cyan platforms to bounce."
+    ]
+  },
+  "cyber-mancala": {
+    titleEn: "Cyber Mancala",
+    descEn: "Ancient board game Mancala styled in cyber-retro neon. Distribute seeds to capture the opponent's pieces and collect the most energy.",
+    controlsEn: [
+      "Click on one of your pits (bottom row) to pick up seeds.",
+      "The seeds will be distributed one-by-one counter-clockwise.",
+      "If the last seed lands in your store (right side), you get another turn.",
+      "If the last seed lands in an empty pit on your side, you capture it and the opposite pit's seeds."
+    ]
+  },
+  "cyber-hangman": {
+    titleEn: "Cyber Hangman",
+    descEn: "Decrypt security keywords by guessing letters before the firewall triggers a total lock out.",
+    controlsEn: [
+      "Select letters on the digital keyboard to guess the password.",
+      "Each incorrect guess triggers a firewall alert and breaches one security shield.",
+      "You have 6 attempts to guess the word before the system locks down."
+    ]
+  },
+  "cyber-darts": {
+    titleEn: "Cyber Darts",
+    descEn: "A precision timing game. Aim and throw darts at a rotating neon board to score points.",
+    controlsEn: [
+      "Watch the rotating neon dartboard.",
+      "Click or tap once to lock the horizontal position, and click again to lock the vertical position.",
+      "Score points based on where your dart lands. Hit the center Bullseye for maximum points!",
+      "You have 5 darts per round."
+    ]
+  },
+  "cyber-poker-squares": {
+    titleEn: "Cyber Poker Squares",
+    descEn: "Build the best poker hands by placing 25 drawn cards onto a 5x5 grid.",
+    controlsEn: [
+      "Look at the 'Next Card' shown at the side.",
+      "Click an empty slot on the 5x5 grid to place the card.",
+      "Form high-scoring poker hands horizontally (rows) and vertically (columns).",
+      "Try to maximize your total score after all 25 cards are placed."
+    ]
+  },
+  "cyber-laser-grid": {
+    titleEn: "Cyber Laser Grid",
+    descEn: "Reflect and route laser beams by rotating mirrors to hit all target receivers.",
+    controlsEn: [
+      "Click or tap mirrors to rotate them by 90 degrees.",
+      "Guide the laser beam from the transmitter to all target nodes.",
+      "Avoid solid obstacles that block the laser.",
+      "Hit all target nodes to clear the level."
+    ]
+  },
+  "cyber-hex-block": {
+    titleEn: "Cyber Hex Block",
+    descEn: "Place various shaped hexagonal blocks onto the grid. Fill rows in any of the three directions to clear them.",
+    controlsEn: [
+      "Click a block from the three choices at the bottom to select it.",
+      "Click an empty cell on the hexagonal board to place the block.",
+      "Fill a full line horizontally or diagonally to clear hexagons and score points.",
+      "The game ends when no more blocks can be placed."
+    ]
+  },
+  "cyber-paint-roller": {
+    titleEn: "Cyber Paint Roller",
+    descEn: "Paint the entire maze by sliding your roller. It only stops when hitting walls.",
+    controlsEn: [
+      "Use Arrow keys, WASD, or swipe to slide the roller.",
+      "The roller moves in a straight line until it hits a wall/obstacle.",
+      "Paint every path tile in the maze to complete the level.",
+      "Clear all levels to win."
+    ]
+  },
+  "cyber-math-path": {
+    titleEn: "Cyber Math Path",
+    descEn: "Navigate the grid applying operations to your value. Reach the exit with the exact target number.",
+    controlsEn: [
+      "Start at the top-left cell with the starting value.",
+      "Move to adjacent cells to apply operations (+, -, *).",
+      "Plan your path to the bottom-right exit.",
+      "Reach the exit with the exact target value shown at the top."
+    ]
+  },
+  "cyber-rhythm-circles": {
+    titleEn: "Cyber Rhythm Circles",
+    descEn: "Test your timing and rhythm. Click circles exactly when the shrinking outer ring aligns with the inner circle.",
+    controlsEn: [
+      "Watch for circles appearing on the screen.",
+      "Click or tap the circle when the shrinking outer ring matches the size of the inner circle.",
+      "Time your clicks perfectly to score 300 points. Misses reduce your health bar.",
+      "Survive as long as you can."
+    ]
+  },
+  "cyber-memory-matrix": {
+    titleEn: "Cyber Memory Matrix",
+    descEn: "Memorize and recall the positions of glowing green panels on a grid matrix.",
+    controlsEn: [
+      "Watch the grid panels flash green at the start of each level.",
+      "Memorize their locations.",
+      "Once they fade, click the remembered tiles in any order.",
+      "Clearing levels increases grid dimensions and active nodes. 3 mistakes will trigger a lockout."
+    ]
+  },
+  "cyber-bridge-builder": {
+    titleEn: "Cyber Bridge Builder",
+    descEn: "Extend a neon bridge to the perfect length to cross between towering buildings.",
+    controlsEn: [
+      "Click and hold (or tap and hold) to extend the bridge upward.",
+      "Release when you think it matches the distance to the next building.",
+      "The bridge will fall down 90 degrees.",
+      "Land exactly on the green target zone in the center of the building for a perfect bonus."
+    ]
+  },
+  "cyber-bullet-hell": {
+    titleEn: "Cyber Bullet Hell",
+    descEn: "Evade waves of infinite neon tracking laser bullets dynamically spawning around you.",
+    controlsEn: [
+      "Move mouse or drag the screen to steer the blue core.",
+      "Dodge oncoming red laser projectiles.",
+      "Collect green particles to gain massive bonus points.",
+      "Survive as long as you can before shields reach zero."
+    ]
+  },
+  "cyber-core-merge": {
+    titleEn: "Cyber Core Merge",
+    descEn: "Drop and combine energetic neon cores. Match identical sizes to evolve them to higher capacities.",
+    controlsEn: [
+      "Move mouse or slide to set the drop trajectory.",
+      "Click or tap to drop the neon core.",
+      "Combine cores of the same level to merge them into a larger one.",
+      "Prevent cores from piling past the top red warning line."
+    ]
+  },
+  "cyber-lockpicker": {
+    titleEn: "Cyber Lockpicker",
+    descEn: "Disarm concentric firewalls by clicking exactly when the rotating indicator aligns with the target sector.",
+    controlsEn: [
+      "Watch the blue pointer rotate along the circular lock rings.",
+      "Click or tap when the pointer is inside the green target sector.",
+      "Unlock all concentric layers to proceed to the next security stage.",
+      "Missed timings will deplete shield strength."
+    ]
+  },
+  "cyber-traffic-control": {
+    titleEn: "Cyber Traffic Control",
+    descEn: "Direct traffic at a data crossroads. Stop and release vehicles to prevent catastrophic collisions.",
+    controlsEn: [
+      "Vehicles flow automatically from top, bottom, left, and right.",
+      "Tap or click a vehicle to toggle its stop/resume state.",
+      "Stopped vehicles flash red.",
+      "Avoid any two vehicles overlapping to prevent a system crash."
+    ]
+  },
+  "cyber-math-drop": {
+    titleEn: "Cyber Math Drop",
+    descEn: "Drop falling numbered blocks to align consecutive chains summing up to exactly 10.",
+    controlsEn: [
+      "Tap or click on columns (1 to 5) to drop the numbered blocks.",
+      "Adjacent cells (horizontally or vertically) that add up to exactly 10 will dissolve.",
+      "Clearing blocks gains score and clears grid space.",
+      "Game over if blocks pile up to the top row."
+    ]
+  },
+  "cyber-space-tunnel": {
+    titleEn: "Cyber Space Tunnel",
+    descEn: "Orbit a circular neon grid in a high-speed 3D tunnel and dodge oncoming segment gates.",
+    controlsEn: [
+      "Move mouse, slide, or use Left/Right Arrow keys to rotate the blue cursor.",
+      "Align your position with gaps in the oncoming red circular gates.",
+      "Pass through successfully to score points.",
+      "Colliding with gates damages your protective shields."
+    ]
+  },
+  "cyber-color-path": {
+    titleEn: "Cyber Color Path",
+    descEn: "Link matching neon nodes on a grid with non-intersecting cables to fully cover the matrix.",
+    controlsEn: [
+      "Click and drag from a colored terminal node to draw a path.",
+      "Connect it to the matching node of the same color.",
+      "Paths cannot overlap or intersect other colors.",
+      "Successfully connect all pairs and cover all grid tiles to win."
+    ]
+  },
+  "cyber-falling-sand": {
+    titleEn: "Cyber Sand Sandbox",
+    descEn: "Interact with cellular physics. Draw Sand, Water, Fire, and solid Walls to observe dynamic reactions.",
+    controlsEn: [
+      "Select an element (Sand, Water, Fire, Wall, or Eraser) from the top bar.",
+      "Draw inside the sandbox grid to place particles.",
+      "Observe gravity physics, liquid flow, combustion, and evaporation."
+    ]
+  },
+  "cyber-dots-boxes": {
+    titleEn: "Cyber Dots & Boxes",
+    descEn: "Draw lines between grid dots to complete boxes and claim territories in this classic neon strategy game.",
+    controlsEn: [
+      "Click the space between two adjacent dots to draw a line.",
+      "Complete a 4-sided square (box) to score a point (P) and claim it.",
+      "Completing a box awards you an extra turn to draw another line.",
+      "The player with the most boxes when the grid is full wins."
+    ]
+  },
+  "cyber-tangram": {
+    titleEn: "Cyber Tangram",
+    descEn: "Drag, position, and rotate glowing neon geometric shapes to fit them perfectly inside the target silhouette.",
+    controlsEn: [
+      "Drag neon shapes to reposition them.",
+      "Double-click a shape or click the ROTATE button to rotate it by 45 degrees.",
+      "Align all pieces inside the grey template silhouette to win."
+    ]
+  },
+  "cyber-brick-shooter": {
+    titleEn: "Cyber Brick Shooter",
+    descEn: "Launch a stream of neon balls to break numbered descending brick blocks in this addictive reflection arcade game.",
+    controlsEn: [
+      "Click and drag on the screen to aim, release to shoot a stream of balls.",
+      "Balls bounce off walls and reduce brick counters on hit.",
+      "Bricks descend by one row each turn. Clear them before they hit the bottom red limit line."
+    ]
+  },
+  "cyber-rush-hour": {
+    titleEn: "Cyber Rush Hour",
+    descEn: "Slide horizontal and vertical neon vehicle blocks out of the way to let the red escape vehicle reach the exit portal.",
+    controlsEn: [
+      "Click and drag vehicle blocks to slide them forward or backward.",
+      "Horizontal vehicles can only slide horizontally; vertical vehicles slide vertically.",
+      "Steer the red ESCAPE vehicle to the EXIT arrow on the right to win."
+    ]
+  },
+  "cyber-shisen-sho": {
+    titleEn: "Cyber Sichuan (Shisensho)",
+    descEn: "Match and remove pairs of identical neon tiles with connecting lines turning at most twice.",
+    controlsEn: [
+      "Click two identical matching tiles to remove them.",
+      "The connecting path between tiles must turn at most twice and cannot intersect other tiles.",
+      "Paths can also route around the outer edges of the board."
+    ]
+  },
+  "cyber-untangle": {
+    titleEn: "Cyber Untangle",
+    descEn: "Drag nodes of a scrambled neon network to untangle the connections and prevent any line segments from crossing.",
+    controlsEn: [
+      "Click and drag nodes to move them around.",
+      "Crossed lines will glow red; untangled, safe lines will glow green/blue.",
+      "Untangle the entire network until all lines are safe to clear the stage."
+    ]
+  },
+  "cyber-dominoes": {
+    titleEn: "Cyber Dominoes",
+    descEn: "Place domino tiles from your hand matching the numbers at either open end of the center train.",
+    controlsEn: [
+      "Click a domino from your hand to select it.",
+      "Yellow indicator arrows will appear on the valid ends where you can connect it.",
+      "If you have no playable moves, click the DRAW button to draw a tile from the boneyard."
+    ]
+  },
+  "cyber-neon-mines": {
+    titleEn: "Cyber Neon Mines",
+    descEn: "Flip tiles in a 5x5 matrix to find multipliers and gems while dodging hidden mines.",
+    controlsEn: [
+      "Click any face-down panel to reveal a gem (multiplier) or mine (game over).",
+      "Gems increase your potential payout multiplier.",
+      "Click CASH OUT at any time to claim your points before hitting a mine."
+    ]
+  },
+  "cyber-bubble-shooter": {
+    titleEn: "Cyber Bubble Shooter",
+    descEn: "Aim and shoot colored neon bubbles. Connect three or more of the same color to pop them.",
+    controlsEn: [
+      "Move the pointer to aim and click to shoot the colored bubble.",
+      "Bubbles bounce off left and right walls. If they touch top bubbles, they stick.",
+      "Pop groups of 3 or more of the same color. Prevent bubbles from crossing the bottom red line."
+    ]
+  },
+  "cyber-block-collapse": {
+    titleEn: "Cyber Block Collapse",
+    descEn: "Click clusters of two or more adjacent identical color blocks to collapse them and cascade the grid.",
+    controlsEn: [
+      "Click any group of 2 or more adjacent matching colored blocks to pop them.",
+      "Popping larger groups awards exponentially higher scores.",
+      "The game ends when no more valid adjacent groups remain."
+    ]
+  },
+  "cyber-logic-gates": {
+    titleEn: "Cyber Logic Gates",
+    descEn: "Assemble logical pathways using AND, OR, XOR, and NOT gates to match the target outputs.",
+    controlsEn: [
+      "Click input nodes on the left to toggle between 0 and 1 signals.",
+      "Click gate blocks (AND, OR, etc.) in the center to change the gate type.",
+      "Match all output nodes on the right with the target values to clear the level."
+    ]
+  },
+  "cyber-gravity-puzzle": {
+    titleEn: "Cyber Gravity Puzzle",
+    descEn: "Rotate gravity directions to navigate the neon core safely through traps to the portal.",
+    controlsEn: [
+      "Use arrow keys, WASD, or the on-screen buttons to change the direction of gravity.",
+      "The blue core will fall in the direction of gravity until it hits an obstacle.",
+      "Reach the green portal while avoiding red spikes to clear the level."
+    ]
+  },
+  "cyber-hacking-code": {
+    titleEn: "Cyber Hacking Code",
+    descEn: "Analyze the code stream and pick keys matching security rules to bypass firewall defenses.",
+    controlsEn: [
+      "Watch the target security rule shown at the top.",
+      "Quickly click the falling code keys that match the rule (e.g. EVEN NUMBERS, STARTS WITH 'SYS').",
+      "Clicking incorrect keys or letting correct ones drop off-screen reduces your shields."
+    ]
+  },
+  "cyber-sonar-sweeper": {
+    titleEn: "Cyber Sonar Sweeper",
+    descEn: "Scan the abyss. Memorize target locations revealed briefly by sonar pulses and safely sweep them.",
+    controlsEn: [
+      "Observe the circular sonar wave sweeping outward.",
+      "Red targets will briefly glow when hit by the sonar wave.",
+      "Memorize their locations and click them when they return to darkness.",
+      "Clear all targets to win; clicking empty spots costs you lives."
+    ]
+  },
+  "cyber-rail-connector": {
+    titleEn: "Cyber Rail Connector",
+    descEn: "Route data packets through network grids by switching rail junctions to prevent gridlocks.",
+    controlsEn: [
+      "Data packets flow automatically from the left start ports.",
+      "Click green arrow junctions on the tracks to change their directions.",
+      "Guide packets to the correct output ports on the right; avoid dead ends."
+    ]
+  },
+  "cyber-dna-match": {
+    titleEn: "Cyber DNA Match",
+    descEn: "Synthesize target DNA chains by catching matching falling nucleotide bases in real-time.",
+    controlsEn: [
+      "Bases (A, C, G, T) fall from the top of the screen in multiple lanes.",
+      "Press Left/Right arrow keys or click left/right sides to steer the collector platform.",
+      "Collect bases in the exact order shown in the target sequence at the bottom."
+    ]
+  },
+  "cyber-orbit-shield": {
+    titleEn: "Cyber Orbit Shield",
+    descEn: "Rotate the orbit shield around the central core to deflect incoming hostile cyber debris.",
+    controlsEn: [
+      "Move the cursor or drag the screen to rotate the blue orbit shield.",
+      "Deflect incoming red cyber debris using the shield.",
+      "Direct hits on the core damage shield HP; survive for 30 seconds to win."
+    ]
+  },
+  "cyber-pulse-rhythm": {
+    titleEn: "Cyber Pulse Rhythm",
+    descEn: "Tap nodes at the exact moment the expanding pulse wave aligns with their outer rings.",
+    controlsEn: [
+      "Watch for glowing colored nodes on the screen.",
+      "Wait for the shrinking indicator ring to align perfectly with the node's border.",
+      "Click or tap the node. Timing yields PERFECT, GOOD, or MISS ratings."
+    ]
+  },
+  "cyber-node-linker": {
+    titleEn: "Cyber Node Linker",
+    descEn: "Activate the grid network by linking all cyber nodes in a single, non-overlapping stroke.",
+    controlsEn: [
+      "Click any node to select your starting point.",
+      "Click adjacent connected nodes to draw paths between them.",
+      "Cover every single edge exactly once without crossing previous paths to activate the grid."
+    ]
+  },
+  "cyber-orbit-breakout": {
+    titleEn: "Cyber Orbit Breakout",
+    descEn: "Deflect the bouncing core inside a circular orbit to destroy all central neon grid blocks.",
+    controlsEn: [
+      "Move your mouse or slide to rotate the outer blue paddle along the orbit.",
+      "Reflect the bouncing ball back into the center to break all neon blocks.",
+      "If the ball escapes past the outer orbit, you lose a life."
+    ]
+  },
+  "cyber-schulte-grid": {
+    titleEn: "Cyber Schulte Grid",
+    descEn: "Find and click numbers from 1 to 25 in ascending order as fast as possible on a 5x5 grid.",
+    controlsEn: [
+      "Observe the 1-25 randomized numbers in the 5x5 grid.",
+      "Click them in ascending order: 1, 2, 3... up to 25.",
+      "Correct clicks flash green, incorrect clicks flash red.",
+      "Compete for the fastest completion time."
+    ]
+  },
+  "cyber-number-link": {
+    titleEn: "Cyber Number Link",
+    descEn: "Connect pairs of matching glowing numbers with lines without overlapping or crossing them.",
+    controlsEn: [
+      "Drag from a numbered node to another matching node to draw a path.",
+      "Connect all pairs and fill every cell in the grid to win.",
+      "Paths cannot cross or overlap. Dragging over an existing line will break it."
+    ]
+  },
+  "cyber-binary-puzzle": {
+    titleEn: "Cyber Binary Puzzle",
+    descEn: "Fill the grid with 0s and 1s adhering to logic constraints (no 3-in-a-row, equal counts).",
+    controlsEn: [
+      "Click empty cells to cycle through: empty, 0, and 1.",
+      "No three identical numbers can be adjacent next to each other horizontally or vertically.",
+      "Each row and column must contain an equal number of 0s and 1s.",
+      "All rows and columns must be unique."
+    ]
+  },
+  "cyber-pixel-painter": {
+    titleEn: "Cyber Pixel Painter",
+    descEn: "Replicate the target neon pixel artwork on the interactive canvas grid.",
+    controlsEn: [
+      "Select a color from the bottom palette.",
+      "Click or drag on the canvas to paint the grid cells.",
+      "Match the target pattern on the left exactly to win."
+    ]
+  },
+  "cyber-typing-invaders": {
+    titleEn: "Cyber Typing Invaders",
+    descEn: "Type the falling letters to fire lasers and destroy incoming invaders before they breach your shield.",
+    controlsEn: [
+      "Observe the falling letters (invaders) from the top.",
+      "Type the corresponding key on your keyboard to shoot lasers and destroy them.",
+      "If they reach the bottom, your shield HP decreases.",
+      "Protect your base and try to survive as long as possible."
+    ]
+  },
+  "cyber-synth-simon": {
+    titleEn: "Cyber Synth Simon",
+    descEn: "Listen and memorize the musical pattern of glowing synth pads, then repeat it in order.",
+    controlsEn: [
+      "Press the central START button to begin.",
+      "Watch and memorize the sequence of flashing pads and synth pitches.",
+      "Repeat the pattern in the exact same sequence during your turn.",
+      "Each round adds one more pad to the sequence."
+    ]
+  },
+  "cyber-laser-dodger": {
+    titleEn: "Cyber Laser Dodger",
+    descEn: "Dodge high-speed laser beams sweeping across the grid using cursor or drag controls.",
+    controlsEn: [
+      "Move the green player core using mouse movement or touch drag.",
+      "Evacuate the warning zones (red dotted lines) immediately.",
+      "Avoid the white-hot lasers that activate shortly after.",
+      "Survive as long as possible. Speed increases over time."
+    ]
+  },
+  "cyber-make-ten": {
+    titleEn: "Cyber Make Ten",
+    descEn: "Combine 4 random digits using arithmetic operations step-by-step to get exactly 10.",
+    controlsEn: [
+      "Click a number, select an operator (+, -, *, /), then click a second number to merge them.",
+      "Combine all numbers step-by-step to form a single final card.",
+      "Clear the level by making the final number exactly 10.",
+      "Use UNDO to step back or RESET to start over."
+    ]
+  },
+  "cyber-aim-trainer": {
+    titleEn: "Cyber Aim Trainer",
+    descEn: "Click the expanding and shrinking neon targets before they disappear to test your speed and accuracy.",
+    controlsEn: [
+      "Click the circular targets as soon as they appear.",
+      "Targets expand and shrink over time; hit them before they vanish.",
+      "Missing a target decreases your lives. You start with 3 lives.",
+      "Hit targets consecutively to build combo multipliers and boost your score."
+    ]
+  },
+  "cyber-bounce-phys": {
+    titleEn: "Cyber Bounce Physics",
+    descEn: "Draw trampoline lines to bounce falling neon energy spheres into the green target receiver.",
+    controlsEn: [
+      "Drag to draw up to 5 reflection lines on the screen.",
+      "Guide the falling energy spheres into the green RECEIVER box.",
+      "Drawing a 6th line will automatically remove the oldest one."
+    ]
+  },
+  "cyber-shell-game": {
+    titleEn: "Cyber Shell Game",
+    descEn: "Locate the glowing energy core hidden under one of three cyber cups after they shuffle at high speeds.",
+    controlsEn: [
+      "Wait for the cups to finish shuffling.",
+      "Click or tap the cup you believe contains the energy core.",
+      "Get score bonuses for correct guesses. Three strikes and the system shuts down."
+    ]
+  },
+  "cyber-spot-difference": {
+    titleEn: "Cyber Spot Difference",
+    descEn: "Compare two side-by-side neon matrix grids and find the single differing pixel block as fast as possible.",
+    controlsEn: [
+      "Observe both left and right grids.",
+      "Click the single pixel with a different color on the right grid.",
+      "Solve as many as possible within 30 seconds. Wrong clicks penalize time."
+    ]
+  },
+  "cyber-life-simulation": {
+    titleEn: "Cyber Life Simulation",
+    descEn: "An interactive cell-automata simulator. Spawn and manipulate life seeds on a digital neon matrix grid.",
+    controlsEn: [
+      "Click cells to toggle them between alive (neon green) and dead (dark).",
+      "Click START/PAUSE to control simulation updates.",
+      "Click STEP to advance one generation, CLEAR to erase all, or RANDOM to scramble cells."
+    ]
+  },
+  "cyber-pyramid-solitaire": {
+    titleEn: "Cyber Pyramid Solitaire",
+    descEn: "Remove pairs of cards summing up to 13 from the pyramid to decrypt the secure card layout.",
+    controlsEn: [
+      "Select exposed cards from the pyramid or the waste pile.",
+      "Pair two cards that sum to 13 (e.g. 5 and 8, A and Q) to remove them.",
+      "King (13) can be selected and removed individually. Clear the pyramid to win."
+    ]
+  },
+  "cyber-coin-pusher": {
+    titleEn: "Cyber Coin Pusher",
+    descEn: "Drop virtual neon coins onto the moving tray. Push them forward into the prize collection bin.",
+    controlsEn: [
+      "Click at the top of the board to drop a coin at that horizontal position.",
+      "Let the moving pusher push coins forward. Score points and replenish your credits when coins fall forward.",
+      "Avoid letting coins fall down the side gutters. Game ends when you run out of credits."
+    ]
+  },
+  "cyber-word-scramble": {
+    titleEn: "Cyber Word Scramble",
+    descEn: "Rearrange scrambled letters to decrypt encrypted technology keywords before the security timeout.",
+    controlsEn: [
+      "Select a letter tile and click another to swap their positions.",
+      "Spell the target keyword correctly to clear the stage and earn bonus time.",
+      "Solve as many scrambles as possible before time runs out."
+    ]
+  },
+  "cyber-color-conquest": {
+    titleEn: "Color Conquest",
+    descEn: "An Ataxx-style tactical board game. Conquer territories by replicating or jumping cores and capturing adjacent enemy cores.",
+    controlsEn: [
+      "Click your blue core to select it, then click an highlighted target cell to move.",
+      "Moving 1 cell replicates your core. Moving 2 cells jumps the core.",
+      "Enemy red cores adjacent to your landing spot will be captured and turned blue."
+    ]
+  },
+  "cyber-binary-converter": {
+    titleEn: "Cyber Binary Converter",
+    descEn: "Speed-calculate and toggle 8-bit switches to translate target decimal values into binary code.",
+    controlsEn: [
+      "Observe the target decimal (DEC) value.",
+      "Toggle the 8 bit-switches (128 down to 1) to sum up to the target value.",
+      "Match the target exactly to proceed. Clear as many numbers as possible within 35 seconds."
+    ]
+  },
+  "cyber-grid-filler": {
+    titleEn: "Cyber Grid Filler",
+    descEn: "Steer the active core in a single stroke to fill every unvisited path tile while avoiding firewall obstacles.",
+    controlsEn: [
+      "Use WASD, Arrow keys, or click adjacent path cells to move the green core.",
+      "Fill every single non-obstacle tile on the grid exactly once.",
+      "Do not step back onto already filled cells. Reach 100% fill rate to clear the stage."
+    ]
+  },
+  "cyber-safe-cracker": {
+    titleEn: "Cyber Safe Cracker",
+    descEn: "Rotate the combination lock dial and calibrate dial alignment using wave resonance clues on the oscilloscope.",
+    controlsEn: [
+      "Drag the central dial or click the navigation arrows to rotate the dial values.",
+      "Watch the oscilloscope. High frequency and resonance (near 100%) indicate you are close to a lock code.",
+      "Unlock all three combinations within 60 seconds to crack the vault."
+    ]
+  },
+  "cyber-sliding-fifteen": {
+    titleEn: "Cyber 15 Puzzle",
+    descEn: "Slide neon numbered blocks in a 4x4 grid and arrange them in order from 1 to 15.",
+    controlsEn: [
+      "Click or tap numbered panels next to the empty space to slide them.",
+      "Arrange the numbers in ascending order from 1 (top-left) to 15.",
+      "Leave the bottom-right grid square empty to solve the decryption."
+    ]
+  },
+  "cyber-frequency-tuner": {
+    titleEn: "Frequency Tuner",
+    descEn: "Adjust parameters of a player sine wave to perfectly overlay the target frequency wave.",
+    controlsEn: [
+      "Drag the three sliders at the bottom (AMPLITUDE, FREQUENCY, PHASE) to match the waves.",
+      "Align the solid cyan wave with the target dashed pink wave.",
+      "Maintain a synchronized match for a short moment to lock the frequency."
+    ]
+  },
+  "cyber-logic-evaluator": {
+    titleEn: "Logic Formula Evaluator",
+    descEn: "Calculate values of Boolean logic expressions (AND, OR, NOT, XOR) and guess 0 or 1 under pressure.",
+    controlsEn: [
+      "Observe the logical formula and given variable values (A, B, C) at the top.",
+      "Calculate whether the expression evaluates to 0 (False) or 1 (True).",
+      "Click the bottom '0' or '1' buttons to submit your response before time runs out."
+    ]
+  },
+  "cyber-color-switch": {
+    titleEn: "Neon Color Switch",
+    descEn: "Toggle the color of your player core to safely pass matching neon defense barriers.",
+    controlsEn: [
+      "Click or tap the screen to shift the player core color (Cyan -> Magenta -> Yellow).",
+      "Match the color of the core to the oncoming descending gates.",
+      "Avoid color mismatches to prevent shield depletion."
+    ]
+  },
+  "cyber-space-miner": {
+    titleEn: "Cyber Space Miner",
+    descEn: "Shoot a mechanical crane claw at the perfect angle to retrieve valuable neon energy crystals.",
+    controlsEn: [
+      "Wait for the rotating crane to align with target crystals.",
+      "Click or tap the screen to extend the crane hook.",
+      "Catch blue energy crystals and avoid red space junk which slows retrieval and deducts points."
+    ]
+  },
+  "cyber-speed-match": {
+    titleEn: "Cyber Speed Match",
+    descEn: "Rapidly determine if the current card matches the previous one in shape and color.",
+    controlsEn: [
+      "Memorize the first card shape and color and click the button to start.",
+      "Decide if the new card matches the previous card in both color and shape.",
+      "Click 'SAME' if identical, or 'DIFF' if different. Do not lose your 3 lives."
+    ]
+  },
+  "cyber-lock-sequence": {
+    titleEn: "Cyber Lock Sequence",
+    descEn: "Connect numbered security nodes in ascending order in a single drag stroke to bypass firewalls.",
+    controlsEn: [
+      "Find the node numbered '1' on the grid.",
+      "Click and drag starting from '1' to draw a path.",
+      "Connect nodes in numerical order without letting go. Any mistakes or early releases will reset the lock."
+    ]
+  },
+  "cyber-gravity-orbit": {
+    titleEn: "Cyber Gravity Orbit",
+    descEn: "Launch deep-space probes utilizing planetary gravity fields to target specific receiver portals.",
+    controlsEn: [
+      "Click and drag back from the launcher base to aim and adjust launch power.",
+      "Release to launch the probe into space.",
+      "Plan your path using the gravity pull of purple planets. Target the pink portal while avoiding collisions."
+    ]
+  },
+  "cyber-word-drop": {
+    titleEn: "Cyber Word Drop",
+    descEn: "Type falling technical keywords in real-time to dissolve them before they breach the system firewall.",
+    controlsEn: [
+      "Type the first letter of a falling word to lock onto it.",
+      "Complete typing the entire word to destroy it and gain score.",
+      "Clear words before they cross the red firewall line at the bottom."
+    ]
+  },
+  "cyber-chute-landing": {
+    titleEn: "Cyber Chute Landing",
+    descEn: "Deploy and cut the parachute of a falling space capsule to land safely on moving platforms.",
+    controlsEn: [
+      "Hold click/touch to deploy the parachute, and release to drop quickly.",
+      "Deploying chute slows descent but subjects the capsule to strong horizontal wind drift.",
+      "Land safely on the moving green dock at a low speed (under 2.2 m/s) to win."
+    ]
+  },
+  "cyber-minesweeper-3d": {
+    titleEn: "3D Minesweeper",
+    descEn: "A 3D Minesweeper game inside a 3x3x3 grid cube. Clear three-dimensional layers without hitting mines.",
+    controlsEn: [
+      "Click tiles in the 3 layers (front, center, back) to sweep them.",
+      "Numbers indicate mines nearby in 26 spatial directions.",
+      "Toggle between DIG and FLAG modes using the bottom button.",
+      "Clear all safe tiles to win."
+    ]
+  },
+  "cyber-color-flood": {
+    titleEn: "Cyber Color Flood",
+    descEn: "Align all grid squares into a single neon color by merging adjacent colors from the top-left start.",
+    controlsEn: [
+      "Select colors from the bottom bar palette.",
+      "Adjacent matching colors will merge starting from the top-left corner.",
+      "Turn the entire grid into one color to clear.",
+      "Complete the mission within 25 moves."
+    ]
+  },
+  "cyber-bamboo-cut": {
+    titleEn: "Cyber Slash",
+    descEn: "Test your reflexes in this timing action game. Slash the energy cylinder when it hits the target zone.",
+    controlsEn: [
+      "Watch the sliding pointer move left and right.",
+      "Click/tap exactly when the pointer overlaps the green target zone in the center.",
+      "Slash targets successively to build combo multipliers and speed.",
+      "Game over if you lose all 3 lives."
+    ]
+  },
+  "cyber-number-merge-hex": {
+    titleEn: "Hex 2048",
+    descEn: "An advanced 2048 puzzle on a hexagonal honeycomb grid. Slide tiles in 6 directions to merge numbers.",
+    controlsEn: [
+      "Click the 6 arrow buttons on the right to slide tiles.",
+      "Identical numbers merge to double their value on collision.",
+      "A new tile appears after each slide.",
+      "Reach the 2048 tile to win."
+    ]
+  },
+  "cyber-radar-ping": {
+    titleEn: "Radar Ping",
+    descEn: "Monitor the scanner. Click the incoming red target nodes at the exact moment the sweep beam overlaps them.",
+    controlsEn: [
+      "Watch the clockwise rotating scan line.",
+      "Click/tap targets when they glow white under the scan line.",
+      "If targets expire before being scanned, your shield HP decreases.",
+      "Survive as long as possible. Speed increases over time."
+    ]
+  },
+  "cyber-bridge-crossing": {
+    titleEn: "Cyber Bridge Crossing",
+    descEn: "Guide 4 cyber agents across the bridge using a single access key before the battery capacity runs out.",
+    controlsEn: [
+      "Click agents on either side to select them (max 2 members).",
+      "Only agents on the same side as the Access Key (Key icon) can move.",
+      "Click SEND to move selected agents to the opposite side.",
+      "The pair moves at the speed of the slower agent.",
+      "Cross everyone within 15 seconds to win."
+    ]
+  },
+  "cyber-box-packer": {
+    titleEn: "Box Packer",
+    descEn: "Pack all neon block shapes tightly inside the 4x4 grid space without any overlaps or gaps.",
+    controlsEn: [
+      "Click a block from the right inventory to select it.",
+      "Click ROTATE at the bottom to spin the selected piece by 90 degrees.",
+      "Click the left 4x4 grid to place the block using the clicked spot as its top-left corner.",
+      "Click placed blocks inside the grid to return them to the inventory."
+    ]
+  },
+  "cyber-binary-search": {
+    titleEn: "Binary Search Guess",
+    descEn: "Deduce the secret passcode between 1 and 100 within 7 attempts using High/Low feedback.",
+    controlsEn: [
+      "Drag the slider handle to adjust your guess.",
+      "Click the GUESS button to submit.",
+      "Feedback (TOO HIGH/TOO LOW) will shrink the active slider range.",
+      "Find the passcode within 7 attempts to decrypt the vault."
+    ]
+  },
+  "cyber-card-memory-math": {
+    titleEn: "Memory Math Pairs",
+    descEn: "A brain training memory game. Flip cards and match pairs whose values sum up to exactly 10.",
+    controlsEn: [
+      "Click face-down cards to flip them (max 2 cards).",
+      "If their sum equals the TARGET (10), they dissolve.",
+      "If not, they flip back.",
+      "Clear the entire board within 45 seconds to win."
+    ]
+  },
+  "cyber-path-draw": {
+    titleEn: "Path Draw Connect",
+    descEn: "Draw a path from START to GOAL using drag/swipe controls while dodging firewall obstacles.",
+    controlsEn: [
+      "Drag from the green START node to draw a route.",
+      "Dodge red firewall obstacle blocks.",
+      "Connect the route to the yellow GOAL node.",
+      "Clear as many stages as possible within 30 seconds."
+    ]
+  },
+  "cyber-gravity-sling": {
+    titleEn: "Gravity Sling",
+    descEn: "Launch your spaceship into orbit, utilizing gravity assists from planetary bodies to reach the goal portal.",
+    controlsEn: [
+      "Click and drag anywhere on the canvas to set the launch vector (arrow direction and speed).",
+      "Release the mouse button to launch the spaceship.",
+      "The ship is dynamically pulled by the gravity of neon planets.",
+      "Navigate around obstacles to enter the green glowing target portal to win.",
+      "Click Restart if you crash or drift off into deep space."
+    ]
+  },
+  "cyber-neon-loop": {
+    titleEn: "Neon Loop",
+    descEn: "Rotate neon pipe tiles to connect all endpoints and form closed loops across the grid.",
+    controlsEn: [
+      "Click or tap any grid tile to rotate it 90 degrees clockwise.",
+      "Connect all glowing pipe segments so there are no open paths.",
+      "Form complete closed loops to power up the grid and solve the puzzle.",
+      "Solve the grid in minimal moves to achieve the maximum rank."
+    ]
+  },
+  "cyber-speed-dial": {
+    titleEn: "Speed Dial",
+    descEn: "Test your timing and reflexes by tapping exactly when the rotating dial needle overlaps the active target zone.",
+    controlsEn: [
+      "Watch the rotating dial needle spin.",
+      "Click the canvas or press the Spacebar when the needle is inside the cyan target sector.",
+      "Successful hits change target location, shrink target size, and speed up rotation.",
+      "Missing the target zone decreases your HP bar. Survive as long as you can!"
+    ]
+  },
+  "cyber-slither-neon": {
+    titleEn: "Slither Neon",
+    descEn: "Steer your neon worm to collect cyber energy particles, grow longer, and trap AI opponent worms in the arena.",
+    controlsEn: [
+      "Move the mouse pointer or drag touch to guide your neon snake.",
+      "Collect glowing color particles to increase your length and score.",
+      "Cut off opponent worms to force them to crash into your body, converting them into energy.",
+      "Avoid crashing into the outer walls or other worms' bodies."
+    ]
+  },
+  "cyber-hex-flow": {
+    titleEn: "Hex Flow",
+    descEn: "Connect pairs of matching neon color nodes with wires on a hexagonal grid, covering the entire board without crossings.",
+    controlsEn: [
+      "Click and drag from a colored hex node to draw a wire to its matching pair.",
+      "Fill the entire hexagonal grid with wires.",
+      "Wires of different colors cannot cross or overlap.",
+      "Connect all pairs and fill 100% of the cells to clear the level."
+    ]
+  },
+  "cyber-neon-swing": {
+    titleEn: "Neon Swing",
+    descEn: "Launch energy grappling ropes to swing through narrow neon caves, balancing gravity and momentum to reach the destination portal.",
+    controlsEn: [
+      "Click or tap the screen to fire a grappling line to the nearest ceiling anchor point.",
+      "Hold to swing and build speed. Release to fly forward using momentum.",
+      "Fire another line to catch the next anchor.",
+      "Avoid crashing into the floor, ceiling, or obstacle walls.",
+      "Reach the green exit portal at the end of the cave to complete the stage."
+    ]
+  },
+  "cyber-word-chain": {
+    titleEn: "Word Chain",
+    descEn: "Engage in a word chain battle (Shiritori) against the cyber AI. Build valid English words starting with the last letter of the previous word.",
+    controlsEn: [
+      "The AI inputs a word. Look at the last letter.",
+      "Type a valid English word starting with that letter in the text input box, then press Enter or click SUBMIT.",
+      "Your word must be between 3 and 10 letters and cannot be repeated.",
+      "Score points based on word length. Outsmart the AI's database before the timer runs out!"
+    ]
+  },
+  "cyber-kakuro": {
+    titleEn: "Cyber Kakuro",
+    descEn: "Solve classic cross-sum logic puzzles on a glowing neon grid. Fill empty cells with digits 1-9 to match clues.",
+    controlsEn: [
+      "Click on an empty square tile to select it.",
+      "Use the number pad buttons at the bottom to input digits 1 through 9.",
+      "The sum of numbers in each horizontal run or vertical column must equal the hint clue next to it.",
+      "Numbers cannot repeat within the same continuous run.",
+      "Fill the board correctly to clear the system database."
+    ]
+  },
+  "cyber-freecell": {
+    titleEn: "Cyber FreeCell",
+    descEn: "Play classic FreeCell Solitaire with futuristic neon decks. Use 4 temporary storage cells to rearrange the cards.",
+    controlsEn: [
+      "Drag and drop cards or click to move them between columns.",
+      "Build columns down in alternating colors (e.g. red card on black card).",
+      "Utilize the 4 free cells (temporary slots) at the top-left to store single cards.",
+      "Move all cards to the 4 foundation slots at the top-right by suit from Ace to King to win."
+    ]
+  },
+  "cyber-audio-sequence": {
+    titleEn: "Audio Sequence",
+    descEn: "Memorize and repeat melodic sequences played on a futuristic synthesizer board. Test your pitch and memory!",
+    controlsEn: [
+      "Watch and listen as neon keys light up and play synth tones.",
+      "Wait for the signal, then click the keys in the exact same sequence.",
+      "Each successful round adds one more note to the melody.",
+      "Achieve the longest possible sequence to set a high score."
+    ]
+  },
+  "cyber-centipede": {
+    titleEn: "Cyber Centipede",
+    descEn: "Defend your sector against the descending neon cyber centipede. Shooting it splits it into smaller segments.",
+    controlsEn: [
+      "Use Left/Right arrow keys or A/D keys (or tap/swipe screen sides) to steer your cannon.",
+      "Press Spacebar (or tap bottom sector) to fire lasers.",
+      "Shoot all descending centipede segments to secure the sector."
+    ]
+  },
+  "cyber-space-trader": {
+    titleEn: "Cyber Space Trader",
+    descEn: "Travel between neon star systems to trade valuable resources and upgrade your ship while fighting off space pirates.",
+    controlsEn: [
+      "Click on-screen buttons to Buy, Sell, Warp, or Upgrade systems.",
+      "Buy low and sell high across different planets (Nova, Kepler, Cygnus, Orion).",
+      "Fend off space pirates by upgrading ship Lasers and Shields, or try to Flee."
+    ]
+  },
+  "cyber-klax": {
+    titleEn: "Cyber Klax",
+    descEn: "Catch colored neon tiles sliding down the 3D ramp and drop them into a 5x5 grid to line up three or more of the same color.",
+    controlsEn: [
+      "Use Left/Right arrows or A/D keys (or tap screen sides) to move catcher.",
+      "Press Down arrow or S key (or click catcher) to drop the top tile into a grid column.",
+      "Align 3 or more identical colors horizontally, vertically, or diagonally to clear them."
+    ]
+  },
+  "cyber-beat-slice": {
+    titleEn: "Cyber Beat Slice",
+    descEn: "Slice incoming data blocks to the rhythm of the music. Hit blue on the left and red on the right with perfect timing.",
+    controlsEn: [
+      "Press Left arrow or A key (or tap left screen side) when blue block overlaps left circle.",
+      "Press Right arrow or D key (or tap right screen side) when red block overlaps right circle.",
+      "Chain combinations for score multipliers and avoid missing targets."
+    ]
+  },
+  "cyber-chop-timber": {
+    titleEn: "Cyber Chop Tower",
+    descEn: "Hack down a towering firewall stack while dodging incoming security brackets by switching sides.",
+    controlsEn: [
+      "Press Left arrow or A key (or tap left screen side) to chop from left.",
+      "Press Right arrow or D key (or tap right screen side) to chop from right.",
+      "Switch sides instantly to avoid getting hit by descending red firewall bars."
+    ]
+  },
+  "cyber-wheel-fortune": {
+    titleEn: "Cyber Wheel of Fortune",
+    descEn: "Spin the digital neon wheel to determine score multipliers, then guess letters to decrypt secret cyber terms.",
+    controlsEn: [
+      "Click SPIN WHEEL to rotate the wheel and lock in score values.",
+      "Click letters from the keyboard to guess the hidden security phrasing.",
+      "Decrypt the entire word to claim victory and score bonus points."
+    ]
+  },
+  "cyber-make-24": {
+    titleEn: "Cyber Make 24",
+    descEn: "Combine 4 random numbers using basic arithmetic operations (+, -, *, /) and parentheses to equal exactly 24.",
+    controlsEn: [
+      "Click numbers and operators (+, -, *, /, parentheses) to construct a formula.",
+      "You must use all 4 numbers exactly once each.",
+      "Click SUBMIT to evaluate your expression. Score points when the result is exactly 24."
+    ]
+  },
+  "cyber-roulette": {
+    titleEn: "Cyber Roulette",
+    descEn: "A neon roulette table. Place bets on numbers or colors and spin the digital particle wheel to win credits.",
+    controlsEn: [
+      "Select a chip value from the bottom panel.",
+      "Click on the board layout (numbers, Red/Black, Even/Odd) to place chips.",
+      "Click SPIN to spin the particle wheel. Winnings are paid out when the ball lands."
+    ]
+  },
+  "cyber-slitherlink": {
+    titleEn: "Cyber Slitherlink",
+    descEn: "Draw a single continuous loop through the grid dots. Cell numbers represent the count of loop segments around them.",
+    controlsEn: [
+      "Click space between dots to cycle through: Line (Cyan), X mark (Red), and Empty.",
+      "The loop must not cross, branch, or touch itself.",
+      "Form a single closed loop conforming to all cell number constraints to solve."
+    ]
+  },
+  "cyber-word-ladder": {
+    titleEn: "Cyber Word Ladder",
+    descEn: "Change one letter at a time to build a ladder of valid cyber terms from the starting word to the goal word.",
+    controlsEn: [
+      "Click on an empty grid line to select it for editing.",
+      "Type letters using your keyboard or click virtual keyboard keys.",
+      "Each word must be in the security database and differ by exactly one letter from the line above it."
+    ]
+  },
+  "cyber-cipher-breaker": {
+    titleEn: "Cyber Cipher Breaker",
+    descEn: "Decrypt security terms encoded in Caesar ciphers by shifting the alphabet key before the time runs out.",
+    controlsEn: [
+      "An encrypted red ciphertext word is displayed in the center.",
+      "Use the SHIFT buttons at the bottom to shift the alphabet characters.",
+      "Match the decrypted green preview to a known system word to solve and gain score."
+    ]
+  },
+  "cyber-matrix-dodge": {
+    titleEn: "Cyber Matrix Dodge",
+    descEn: "Dodge falling red glitch logs and retrieve cyan data streams to maintain core shield integrity.",
+    controlsEn: [
+      "Slide or move your cursor horizontally to dodge red glitches.",
+      "Collect cyan data characters falling from the matrix streams.",
+      "Keep shield above 0% and survive as the scroll speed escalates."
+    ]
+  },
+  "cyber-binary-clock": {
+    titleEn: "Cyber Binary Clock",
+    descEn: "Decode glowing binary clock nodes representing hours and minutes to match correct digital time stamps.",
+    controlsEn: [
+      "A binary clock grid shows lit neon dots representing decimal values.",
+      "The top row corresponds to Hours (16, 8, 4, 2, 1) and the bottom to Minutes (32, 16, 8, 4, 2, 1). Add the active dot values.",
+      "Choose the correct digital time from the three choice buttons below."
+    ]
+  },
+  "cyber-hue-contrast": {
+    titleEn: "Cyber Hue Contrast",
+    descEn: "Detect the single grid block with a slightly different color brightness or hue to pass authentication steps.",
+    controlsEn: [
+      "Scan the color blocks to find the single tile with a slightly offset hue/saturation.",
+      "Click the different tile to advance. Correct clicks recover time; incorrect clicks penalize it.",
+      "Try to reach the maximum grid size and score as high as possible."
+    ]
+  },
+  "cyber-cryptarithm": {
+    titleEn: "Cyber Cryptarithm",
+    descEn: "Assign unique digits 0-9 to letter symbols in equations to satisfy arithmetic results.",
+    controlsEn: [
+      "A letter-based mathematical formula is presented (e.g. AB + BA = CDC).",
+      "Click a letter, then click on the keypad to assign it a unique digit from 0 to 9.",
+      "Click SUBMIT to evaluate your assignment; solve before the system locks down."
+    ]
+  },
+  "cyber-shuffleboard": {
+    titleEn: "Cyber Shuffleboard",
+    descEn: "Drag, aim, and launch your glowing neon disk, managing friction and bumpers to stop in high-scoring zones.",
+    controlsEn: [
+      "Click and drag the disk backwards to aim and set launch power.",
+      "Release to shoot the disk up the board.",
+      "Accumulate score based on where the disk stops: 20, 50, or 100 point zones. Avoid flying off the board!"
+    ]
+  },
+  "cyber-liars-dice": {
+    titleEn: "Cyber Liar's Dice",
+    descEn: "Roll dice secretly and bid on the total number of dice of a certain value, raising the bid or calling the AI a liar.",
+    controlsEn: [
+      "Both players roll 5 secret dice. Only you see your own hand.",
+      "Bid on the total count of a specific face value on the table (e.g. 'four 5s').",
+      "Raise the quantity or face value, or click CHALLENGE to accuse the AI of bluffing."
+    ]
+  },
+  "cyber-circuit-connect": {
+    titleEn: "Cyber Circuit Connect",
+    descEn: "Trace tangled neon circuit wire pathways connecting inputs to output terminals and select correct pairs.",
+    controlsEn: [
+      "Overlapping neon wires connect top ports (A-E) to bottom terminals (1-5).",
+      "One input port will flash, signifying the target route.",
+      "Follow the trace visually and select the correct output number at the bottom."
+    ]
+  },
+  "cyber-video-poker": {
+    titleEn: "Cyber Video Poker",
+    descEn: "Bet credits and hold key card modules in this neon video poker simulation with standard hand payouts.",
+    controlsEn: [
+      "Select your bet value and click DEAL to receive 5 card items.",
+      "Click on cards you wish to hold. Unselected cards will be replaced.",
+      "Click DRAW to replace cards. Payouts are awarded for Jacks or Better and stronger hands."
+    ]
+  },
+  "cyber-killer-sudoku": {
+    titleEn: "Cyber Killer Sudoku",
+    descEn: "Fill the 4x4 board conforming to standard Sudoku rules and ensuring dotted cage totals equal target numbers.",
+    controlsEn: [
+      "Fill the grid with digits 1 to 4 so each row, column, and 2x2 box contains unique numbers.",
+      "Ensure numbers inside dotted cages add up to the sum target printed in the cage's corner.",
+      "Click cells to select them, and input digits using the bottom buttons."
+    ]
+  },
+  "cyber-traffic-light": {
+    titleEn: "Cyber Traffic Light",
+    descEn: "Control intersection traffic lights to guide neon vehicles safely without causing catastrophic crashes.",
+    controlsEn: [
+      "Click on any traffic light to toggle its state between Green and Red.",
+      "Ensure vehicles from intersecting paths do not collide.",
+      "Safely guide a target number of vehicles to clear the level."
+    ]
+  },
+  "cyber-color-sudoku": {
+    titleEn: "Cyber Color Sudoku",
+    descEn: "Solve a futuristic 4x4 Sudoku puzzle using colored neon nodes instead of numbers.",
+    controlsEn: [
+      "Click an empty cell on the 4x4 grid to open the color selector.",
+      "Select a color to place it in the grid cell.",
+      "Ensure each row, column, and 2x2 grid contains 4 unique colors with no repeats."
+    ]
+  },
+  "cyber-triplets-match": {
+    titleEn: "Cyber Triplets Match",
+    descEn: "A high-tech memory puzzle where you must locate and match triplets (3 identical cards) instead of pairs.",
+    controlsEn: [
+      "Click cards on the matrix to flip and reveal their hidden symbols.",
+      "Locate three identical cards to clear them from the board.",
+      "Clear the entire board before your lives or time runs out."
+    ]
+  },
+  "cyber-sound-memory": {
+    titleEn: "Cyber Sound Memory",
+    descEn: "Test your pitch and auditory memory by matching pairs of identical synthesizer tones.",
+    controlsEn: [
+      "Click face-down sound nodes to play their synth frequencies.",
+      "Match pairs that have the exact same pitch/sound.",
+      "Clear the board in as few attempts as possible."
+    ]
+  },
+  "cyber-space-deflector": {
+    titleEn: "Cyber Space Deflector",
+    descEn: "Navigate a ship and deploy a deflector shield to bounce incoming asteroids back to destroy enemy sentinel cores.",
+    controlsEn: [
+      "Move mouse or drag touch to steer your defensive ship.",
+      "Hold click or spacebar to activate the deflector shield.",
+      "Bounce red asteroids into the glowing target cores to destroy them while avoiding direct hits."
+    ]
+  },
+  "cyber-pathfinder": {
+    titleEn: "Cyber Pathfinder",
+    descEn: "Rapidly analyze grid networks to find and trace the shortest path between host nodes under time pressure.",
+    controlsEn: [
+      "Identify the green START and red END nodes on the grid matrix.",
+      "Click and drag to trace a continuous line between the nodes.",
+      "Your path must avoid obstacles and be the absolute shortest possible to earn maximum points."
+    ]
+  },
+  "cyber-plinko-poker": {
+    titleEn: "Cyber Plinko Poker",
+    descEn: "Drop energetic balls down a peg pyramid into slots to collect cards and build the best Poker hands.",
+    controlsEn: [
+      "Click at the top of the pyramid board to drop a ball.",
+      "The ball bounces off pegs and lands in a card slot at the bottom to draw that card.",
+      "Build a 5-card Poker hand. Press cash out or spin to optimize your payout multipliers."
+    ]
+  },
+  "cyber-word-builder": {
+    titleEn: "Cyber Word Builder",
+    descEn: "Combine random letter tiles on the tray to construct valid English words before the firewall database purges them.",
+    controlsEn: [
+      "Click letter tiles on the tray to place them in the construction box.",
+      "Form a valid English word of 3 or more letters.",
+      "Click the SUBMIT button to clear the letters and score points. Use BACKSPACE to correct mistakes."
+    ]
+  },
+  "cyber-matrix-decoder": {
+    titleEn: "Cyber Matrix Decoder",
+    descEn: "Scan the falling streams of code to identify and click specific numeric combinations matching decryption rules.",
+    controlsEn: [
+      "Observe the target sequence pattern shown at the top of the screen.",
+      "Locate and click the matching sequence within the falling matrix digital streams.",
+      "Perform decryptions successively before the time expires."
+    ]
+  },
+  "cyber-math-balance": {
+    titleEn: "Cyber Math Balance",
+    descEn: "Place numeric value weights on the left and right sides of a balance beam to make them equal.",
+    controlsEn: [
+      "Select number weight blocks from the bottom dock.",
+      "Place them on either the left or right side of the balance beam.",
+      "Match the sum of weights on both sides to balance the beam and clear the logic stage."
+    ]
+  },
+  "cyber-card-higher-lower": {
+    titleEn: "Cyber High & Low",
+    descEn: "Predict whether the next card will be higher or lower than the current card. Test your streak in this classic card game.",
+    controlsEn: [
+      "Click HIGH to predict the next card will be higher than or equal to the current card.",
+      "Click LOW to predict the next card will be lower than or equal to the current card.",
+      "Get consecutive correct answers to increase your score. You have 3 lives."
+    ]
+  },
+  "cyber-nim": {
+    titleEn: "Cyber Nim",
+    descEn: "A mathematical logic game where you and the AI take turns removing neon cores from three heaps. Avoid taking the last core!",
+    controlsEn: [
+      "Click a heap to select it, then click how many cores you want to remove.",
+      "Click the TAKE button to remove selected cores and end your turn.",
+      "The player forced to take the final core loses the game."
+    ]
+  },
+  "cyber-number-sequence": {
+    titleEn: "Cyber Number Sequence",
+    descEn: "Identify patterns in arithmetic, geometric, or Fibonacci sequences to find the missing number before time runs out.",
+    controlsEn: [
+      "Analyze the sequence shown on the screen and deduce the value for '?'.",
+      "Click one of the four choices below to submit your answer.",
+      "Solve as many as possible within the 60-second limit. Correct answers add time, wrong ones reduce it."
+    ]
+  },
+  "cyber-texas-holdem-lite": {
+    titleEn: "Cyber Texas Hold'em",
+    descEn: "Play a simplified heads-up Texas Hold'em poker match against a cyber AI opponent.",
+    controlsEn: [
+      "Click CHECK/CALL to match the opponent's bet or pass.",
+      "Click BET/RAISE to increase the bet amount.",
+      "Click FOLD to forfeit the round. Best five-card hand wins at showdown."
+    ]
+  },
+  "cyber-backgammon-lite": {
+    titleEn: "Cyber Backgammon",
+    descEn: "A simplified 12-point mini-backgammon board game. Direct your checkers home and bear them off before the AI does.",
+    controlsEn: [
+      "Click ROLL to roll two dice.",
+      "Click one of your checkers (blue), then click a highlighted point to move it forward.",
+      "Land on points with single opponent checkers to hit them. Move all 6 checkers home to bear off and win."
+    ]
+  },
+  "cyber-reaction-duel": {
+    titleEn: "Cyber Reaction Duel",
+    descEn: "Test your reaction time in milliseconds. Click as fast as possible when 'FIRE!' appears, but watch out for fouls!",
+    controlsEn: [
+      "Wait for the 'FIRE!' signal after the countdown starts.",
+      "Click or tap anywhere on the screen immediately when 'FIRE!' appears.",
+      "Do not click early, or you will receive a FOUL. First to 3 points wins."
+    ]
+  },
+  "cyber-bulls-cows": {
+    titleEn: "Cyber Bulls & Cows",
+    descEn: "Deduce the hidden 3-digit secret code using strategic hints: 'Bulls' (right digit, right spot) and 'Cows' (right digit, wrong spot).",
+    controlsEn: [
+      "Use the numeric keypad to enter a 3-digit number with no repeating digits.",
+      "Click ENTER to submit your guess and see the Bulls/Cows feedback.",
+      "Use the history log to crack the code within 10 attempts."
+    ]
+  },
+  "cyber-light-pattern": {
+    titleEn: "Cyber Light Pattern",
+    descEn: "Memorize and repeat the growing sequence of glowing panels and synthesized sounds in a 3x3 grid.",
+    controlsEn: [
+      "Watch the sequence of glowing panels during the play phase.",
+      "Click the panels in the exact same order when it's your turn.",
+      "Each successful round adds one more step to the sequence."
+    ]
+  },
+  "cyber-cryptogram": {
+    titleEn: "Cyber Cryptogram",
+    descEn: "Solve substitution ciphers by assigning letters to decode short cyber-themed phrases.",
+    controlsEn: [
+      "Click any encrypted letter (purple border) in the phrase.",
+      "Type a letter on your keyboard or click the onscreen keyboard to assign it.",
+      "Use up to 3 hints to reveal correct letters. Correctly decode the entire phrase to win."
+    ]
+  },
+  "cyber-ludo-lite": {
+    titleEn: "Cyber Ludo Lite",
+    descEn: "Race your two energy checkers around a compact 20-tile track to the goal in this simplified 1v1 Ludo board game.",
+    controlsEn: [
+      "Click ROLL to roll the die.",
+      "Click one of your checkers (blue) to move it forward by the rolled amount.",
+      "Land on the opponent's checker to send it back to their start position. Get both checkers to the goal to win."
+    ]
+  },
+  "cyber-morris": {
+    titleEn: "Cyber Nine Men's Morris",
+    descEn: "Play the ancient board game of strategy on three concentric squares with neon styling against an AI opponent.",
+    controlsEn: [
+      "Placing Phase: Click any empty node (blue ring) to place one of your 9 blue pieces.",
+      "Moving Phase: Click your piece, then click an adjacent empty node to slide it. When reduced to 3 pieces, you can fly anywhere.",
+      "Mill Formation: Align 3 pieces to form a mill and click an opponent's pink piece to remove it from the board.",
+      "Win Condition: Reduce the opponent to 2 pieces or block them from making any valid moves."
+    ]
+  },
+  "cyber-carrom": {
+    titleEn: "Cyber Carrom",
+    descEn: "Flick neon discs into corner pockets with momentum, friction, and bounce physics.",
+    controlsEn: [
+      "Striker Position: Slide the green striker left or right on your baseline to set its starting position.",
+      "Shoot: Click and drag back on the striker to aim and set power, then release to launch it.",
+      "Goal: Pocket all your blue neon discs before the AI pockets their pink discs. Pocketing the red Queen gives bonus score."
+    ]
+  },
+  "cyber-qpyramid": {
+    titleEn: "Cyber Q-Pyramid",
+    descEn: "Jump along a 3D isometric neon pyramid to paint all block faces green while avoiding falling hazard droids.",
+    controlsEn: [
+      "Jump Controls: Click the diagonal arrows on screen, or press W (up-left), E (up-right), A (down-left), D (down-right).",
+      "Goal: Step on all block faces to turn them green.",
+      "Hazards: Avoid red droids jumping down, and do not jump off the pyramid boundary, or you will lose a life."
+    ]
+  },
+  "cyber-snakes-ladders": {
+    titleEn: "Cyber Snakes & Ladders",
+    descEn: "Race to the 100th grid cell on a neon board using dice rolls, boost portals, and down-warps.",
+    controlsEn: [
+      "Roll: Click the ROLL DICE button to roll the die.",
+      "Movement: Your checker moves forward. Land on green portals to warp forward, or red dashed portals to fall backward.",
+      "Victory: Reach exactly the 100th cell. Rolls exceeding 100 will bounce back."
+    ]
+  },
+  "cyber-old-maid": {
+    titleEn: "Cyber Old Maid",
+    descEn: "Draft cards from the AI and discard matching pairs, trying not to be left holding the Joker.",
+    controlsEn: [
+      "Goal: Pair up all cards in your hand and discard them. The last player holding the Joker loses.",
+      "Your Turn: Click one of the AI's face-down cards to draw it. Matching pairs discard automatically.",
+      "AI Turn: The AI will draw one card from your hand and discard any matching pairs."
+    ]
+  },
+  "cyber-gin-rummy": {
+    titleEn: "Cyber Gin Rummy",
+    descEn: "Form card melds (sets and runs) and minimize unmatched cards to knock before the AI opponent.",
+    controlsEn: [
+      "Draw: Click either the face-down Draw Deck or the face-up Discard Pile to draw a card.",
+      "Discard: Click any card in your hand to discard it and end your turn.",
+      "Knock: If your unmatched cards (deadwood) sum to 10 or less, click the KNOCK button to declare and end the round."
+    ]
+  },
+  "cyber-chinese-checkers": {
+    titleEn: "Cyber Chinese Checkers Lite",
+    descEn: "Jump over friendly or opponent checkers on a star/diamond grid to reach the opposite goal triangle.",
+    controlsEn: [
+      "Goal: Move your 3 blue pieces from the bottom starting triangle to the AI's top starting triangle.",
+      "Move: Click your piece, then click an adjacent empty node to slide.",
+      "Jump: If an adjacent node is occupied and the next node in that line is empty, you can jump over it. Multiple jumps allowed."
+    ]
+  },
+  "cyber-hex-board": {
+    titleEn: "Cyber Hex",
+    descEn: "Connect opposite borders of a 6x6 hexagon grid with your colored chain before your opponent connects theirs.",
+    controlsEn: [
+      "Goal: Players take turns claiming empty cells. Blue (Player) connects Left-to-Right; Pink (AI) connects Top-to-Bottom.",
+      "Move: Click any empty hexagon cell to claim it.",
+      "Victory: The first player to connect their two opposing borders with a continuous chain of cells wins."
+    ]
+  },
+  "cyber-gem-cavern": {
+    titleEn: "Cyber Gem Cavern",
+    descEn: "Dig through dirt, collect neon gems, and push or avoid falling stones to escape the electronic cave.",
+    controlsEn: [
+      "Move: Press arrow keys (or WASD) or click the directional arrows to move and dig through earth.",
+      "Hazards: Stones fall when there is empty space beneath them. Do not let falling stones crush you.",
+      "Exit: Collect 5 green gems to unlock the yellow EXIT gate at the bottom-right and walk into it to clear the stage."
+    ]
+  },
+  "cyber-hearts": {
+    titleEn: "Cyber Hearts",
+    descEn: "Avoid taking penalty cards (Hearts and the Queen of Spades) in this classic trick-taking card game.",
+    controlsEn: [
+      "Goal: Play tricks and try to avoid taking Hearts (1 penalty point each) and the Queen of Spades (13 penalty points).",
+      "Play: Click a card in your hand to play it. You must follow the lead suit if you have it.",
+      "Trick Winner: The player who plays the highest card of the led suit wins the trick and leads the next."
+    ]
+  },
+  "cyber-blackjack-solitaire": {
+    titleEn: "Cyber Blackjack Solitaire",
+    descEn: "Place cards on a 5x5 grid to make the best Blackjack hands in all 5 rows and 5 columns.",
+    controlsEn: [
+      "Click on any empty cell in the 5x5 grid to place the current card shown at the top.",
+      "Try to form combinations in each row and column that sum up to 21 (Blackjack is 21 with 2 cards).",
+      "Scores are calculated once all 25 grid slots are filled. Maximize your total score!"
+    ]
+  },
+  "cyber-binary-sudoku": {
+    titleEn: "Cyber Binary Sudoku",
+    descEn: "Fill the 6x6 grid with 0s and 1s adhering to binary puzzle constraints.",
+    controlsEn: [
+      "Click an empty cell to cycle its value: Empty -> 0 -> 1 -> Empty.",
+      "Each row and column must contain exactly three 0s and three 1s.",
+      "No more than two adjacent cells in any direction can contain the same number.",
+      "All rows and columns must be unique."
+    ]
+  },
+  "cyber-shape-fitter": {
+    titleEn: "Cyber Shape Fitter",
+    descEn: "Fit all the neon block shapes perfectly into the designated grid grid overlay.",
+    controlsEn: [
+      "Click a block from the inventory to select it.",
+      "Click on the main grid to place the selected block. Overlapping is not allowed.",
+      "Place all blocks to fill the grid completely and clear the level."
+    ]
+  },
+  "cyber-lights-out-hex": {
+    titleEn: "Cyber Lights Out Hex",
+    descEn: "Toggle the hexagonal grid nodes to turn off all the lights in minimum moves.",
+    controlsEn: [
+      "Click a hexagonal node to toggle its state and the states of all its adjacent neighbors.",
+      "Turn off all glowing green nodes to successfully solve the puzzle."
+    ]
+  },
+  "cyber-word-tetris": {
+    titleEn: "Cyber Word Tetris",
+    descEn: "Drop falling alphabet blocks and form valid English words horizontally or vertically to clear them.",
+    controlsEn: [
+      "Use Left/Right arrow keys or A/D to move the falling letter block.",
+      "Press Down arrow or S to drop it faster.",
+      "Form valid 3-letter or longer English words to score points and clear blocks."
+    ]
+  },
+  "cyber-color-pattern-simon": {
+    titleEn: "Cyber Color Pattern Simon",
+    descEn: "Watch, memorize, and reproduce the flashing color grid pattern paths correctly.",
+    controlsEn: [
+      "Observe the color pattern flash sequence on the 3x3 grid.",
+      "Recreate the path by clicking the panels in the exact same sequence.",
+      "Clearing a level increases the sequence length and difficulty."
+    ]
+  },
+  "cyber-space-evader": {
+    titleEn: "Cyber Space Evader",
+    descEn: "Pilot your ship and evade incoming cyber meteors and obstacles to survive as long as possible.",
+    controlsEn: [
+      "Move the ship using your mouse cursor or arrow keys.",
+      "Avoid hitting red incoming cyber meteors and laser barrages.",
+      "Survive longer to rack up a higher score."
+    ]
+  },
+  "cyber-typing-defence": {
+    titleEn: "Cyber Typing Defense",
+    descEn: "Protect the mainframe by typing the incoming threat words before they reach your firewall.",
+    controlsEn: [
+      "Type the letters matching the words falling from the top of the screen.",
+      "Press Enter or Space after completing a word to destroy it.",
+      "Prevent threats from reaching the bottom firewall shield."
+    ]
+  },
+  "cyber-number-pyramid": {
+    titleEn: "Cyber Number Pyramid",
+    descEn: "Solve mathematical pyramids where each block is the sum of the two blocks below it.",
+    controlsEn: [
+      "Click any empty input block in the pyramid.",
+      "Use your keyboard to enter the correct number that satisfies the addition rule.",
+      "Fill all empty blocks correctly to complete the mainframe decryption."
+    ]
+  },
+  "cyber-maze-runner": {
+    titleEn: "Cyber Maze Runner",
+    descEn: "Navigate through a dark labyrinth, collect security keys, and avoid patrol drones to escape.",
+    controlsEn: [
+      "Use WASD or Arrow Keys to move your green dot through the maze.",
+      "Collect yellow keycards to unlock the exit portal.",
+      "Avoid red patrolling security drones and reach the cyan exit portal."
+    ]
+  },
+  "cyber-wave-harmonizer": {
+    titleEn: "Cyber Wave Harmonizer",
+    descEn: "Adjust frequency, amplitude, and phase until your waveform reaches a 90% match.",
+    controlsEn: [
+      "Drag the neon-colored sliders below the canvas to adjust frequency, amplitude, and phase.",
+      "Bring your blue waveform close to the red target waveform.",
+      "Reach a match rate of 90% or higher to clear the game."
+    ]
+  },
+  "cyber-typing-racer": {
+    titleEn: "Cyber Typing Racer",
+    descEn: "Type target words to accelerate your cybercar and win the speed race against the CPU.",
+    controlsEn: [
+      "Type the letters matching the green target word displayed in the center.",
+      "Every correct character typed accelerates your blue neon car.",
+      "Typos will trigger sparks and slow down your car's speed.",
+      "Reach the checker finish line before the red CPU car to win."
+    ]
+  },
+  "cyber-circular-breakout": {
+    titleEn: "Circular Breakout",
+    descEn: "A 360-degree brick breaker. Rotate the circular paddle to bounce the ball and clear concentric block rings.",
+    controlsEn: [
+      "Move your mouse or slide on screen to rotate the blue circular paddle.",
+      "Deflect the ball into the concentric circles of neon blocks.",
+      "Avoid letting the ball pass through the outer circle boundaries.",
+      "Clear all bricks in the center rings to win."
+    ]
+  },
+  "cyber-radial-minesweeper": {
+    titleEn: "Radial Minesweeper",
+    descEn: "Minesweeper played in a polar coordinate grid. Locate anomalies hidden in concentric rings and sectors.",
+    controlsEn: [
+      "Click/tap sectors on the radial grid to scan and open them.",
+      "Right-click or long-press to place red anomaly warning flags.",
+      "Numbers indicate adjacent mines in outer, inner, left, right, or diagonal sectors.",
+      "Open all safe sectors to complete the scan and decrypt the core."
+    ]
+  },
+  "cyber-color-defense": {
+    titleEn: "Color Shield Defense",
+    descEn: "Rotate the multi-colored central shield to block matching laser beams shot from four directions.",
+    controlsEn: [
+      "Click/tap left/right sides or use A/D or Arrow keys to rotate the shield.",
+      "Incoming color-coded laser beams will fly in from North, South, East, and West.",
+      "Block the beam with the matching colored segment of the shield.",
+      "Defend the core for 30 waves of lasers to succeed."
+    ]
+  },
+  "cyber-slot-car": {
+    titleEn: "Cyber Slot Car",
+    descEn: "Control the speed of a slot car on a single track. Slow down on corners to avoid centrifugal crashes.",
+    controlsEn: [
+      "Click and hold or hold Space to accelerate your blue slot car.",
+      "Release key/click to apply engine braking and slow down.",
+      "Brake before entering the red curved warning zones to prevent flying off the track.",
+      "Complete 3 laps before the red AI car to win the race."
+    ]
+  },
+  "cyber-neon-piano": {
+    titleEn: "Neon Rhythm Tiles",
+    descEn: "A 4-lane rhythm action game. Tap falling neon notes to the beat and keep your combo alive.",
+    controlsEn: [
+      "Press D, F, J, K keys (or tap the bottom buttons on mobile) as notes cross the white judgment line.",
+      "Accuracy is scored as PERFECT, GOOD, or BAD.",
+      "Accumulate combos to increase your score multiplier.",
+      "Survive 80 notes; the game ends if you miss 5 notes."
+    ]
+  },
+  "cyber-sudoku-diagonal": {
+    titleEn: "Diagonal X-Sudoku",
+    descEn: "Standard Sudoku rules plus the extra challenge of ensuring digits 1-9 do not repeat on the two main diagonals.",
+    controlsEn: [
+      "Click/tap any empty cell on the 9x9 neon grid to select it.",
+      "Use the numeric keypad (1-9) at the bottom to enter numbers, or 'C' to clear.",
+      "Observe the extra constraint: numbers must not repeat on the main diagonals (the glowing X).",
+      "Correct all conflicts and fill the board to decrypt the system."
+    ]
+  },
+  "cyber-triangular-minesweeper": {
+    titleEn: "Triangular Minesweeper",
+    descEn: "Search for anomalies on a triangular grid layout. Each cell has 12 neighboring triangles.",
+    controlsEn: [
+      "Click/tap triangles to scan and open them.",
+      "Right-click or long-press to place red flags on suspicious anomaly sectors.",
+      "Numbers indicate adjacent mines in the surrounding 12 triangular tiles.",
+      "Successfully reveal all non-mine sectors to win."
+    ]
+  },
+  "cyber-binary-calculator": {
+    titleEn: "Boolean Logic Builder",
+    descEn: "Place logic gates (AND, OR, XOR) in circuit slots to calculate the correct output from three binary inputs.",
+    controlsEn: [
+      "Click/tap AND, OR, or XOR buttons at the bottom, then click a slot (?) to insert it.",
+      "Digital signals flow from Inputs (A, B, C) through the logic gates.",
+      "Match the final output with the Target red mainframe indicator.",
+      "Solve all 8 stages of boolean equations to hack the firewall."
+    ]
+  },
+  "cyber-color-cascade": {
+    titleEn: "Cyber Color Cascade",
+    descEn: "Rearrange falling three-colored neon blocks to align three or more matching colors horizontally, vertically, or diagonally.",
+    controlsEn: [
+      "Press A/D or Left/Right Arrow keys to move the falling column.",
+      "Press W, Up Arrow, or Spacebar to cycle/rearrange colors within the column.",
+      "Press S or Down Arrow key to soft drop the column faster."
+    ]
+  },
+  "cyber-binary-runner": {
+    titleEn: "Cyber Binary Runner",
+    descEn: "Steer your glider through the correct binary gate that matches the active decimal target.",
+    controlsEn: [
+      "Steer left or right using A/D or Left/Right Arrow keys.",
+      "Look at the TARGET decimal number at the top of the screen.",
+      "Run through the gate showing the correct 3-bit binary equivalent.",
+      "Correct hits score points, incorrect hits deplete shields."
+    ]
+  },
+  "cyber-quantum-entanglement": {
+    titleEn: "Quantum Entanglement",
+    descEn: "Steer two synchronized quantum particles simultaneously to guide both to their target cores.",
+    controlsEn: [
+      "Move the blue particle (Cyan) using WASD or Arrow keys.",
+      "The pink particle moves in the exact opposite (mirrored) direction.",
+      "Steer both particles into their respective green goal circles simultaneously.",
+      "Avoid hitting red firewall barriers, or the level resets."
+    ]
+  },
+  "cyber-mini-crossword": {
+    titleEn: "Cyber Mini Crossword",
+    descEn: "Fill the 4x4 grid with words using the provided tech-themed hints.",
+    controlsEn: [
+      "Click any empty crossword cell to select it.",
+      "Type letters using your keyboard, or Backspace to clear.",
+      "Use Arrow keys to navigate around the grid.",
+      "Correctly solve all Across and Down words to complete the puzzle."
+    ]
+  },
+  "cyber-space-cargo": {
+    titleEn: "Cyber Space Cargo",
+    descEn: "Navigate a lunar lander with a swinging pendulum cargo core safely to the landing pad.",
+    controlsEn: [
+      "Rotate/steer using A/D or Left/Right Arrow keys.",
+      "Fire the main thrusters using W or Up Arrow key.",
+      "Avoid hitting cave walls with both the ship and the swinging yellow cargo core.",
+      "Land gently upright on the green landing pad to win."
+    ]
+  },
+  "cyber-tug-war": {
+    titleEn: "Cyber Tug-of-War",
+    descEn: "Rapidly alternate button presses to pull the energy rope past the victory threshold.",
+    controlsEn: [
+      "Rapidly alternate pressing A and D keys (or Left and Right Arrow keys).",
+      "Pull the center yellow marker into your cyan territory on the left.",
+      "Hold off the AI player pulling towards the pink territory on the right."
+    ]
+  },
+  "cyber-hoverboard-runner": {
+    titleEn: "Cyber Hoverboard Runner",
+    descEn: "Side-scrolling endless runner. Avoid high and low neon lasers on a hoverboard.",
+    controlsEn: [
+      "Press W, Up Arrow, or Spacebar to jump over low obstacles.",
+      "Press S or Down Arrow key to duck/slide under high obstacles.",
+      "Survive as long as possible to maximize your score."
+    ]
+  },
+  "cyber-gravity-well": {
+    titleEn: "Gravity Well Simulator",
+    descEn: "Place up to three gravity wells to bend the probe's trajectory around a barrier to the portal.",
+    controlsEn: [
+      "Click anywhere on the canvas grid to place a Gravity Well (max 3).",
+      "Click an existing well to remove it.",
+      "Click the LAUNCH button to release the probe.",
+      "Click the RESET button to reset the probe and adjust your gravity wells."
+    ]
+  },
+  "cyber-spades": {
+    titleEn: "Cyber Spades",
+    descEn: "A single-round Spades trick-taking card game against three computer opponents.",
+    controlsEn: [
+      "Click a card from your hand at the bottom to play it.",
+      "You must follow the lead suit of the trick if you have it.",
+      "Spades (♠) is the trump suit and beats all other suits.",
+      "Be the first team to win 4 tricks to win the match."
+    ]
+  },
+};
+const activeTranslation = gameTranslations[game.slug];
+const translatedTitle = lang === 'en' ? (activeTranslation?.titleEn || title) : title;
+const translatedDesc = lang === 'en' ? (activeTranslation?.descEn || description) : description;
+const activeTitle = simpleGameTitle(translatedTitle, lang, game.slug);
+const activeDesc = simpleGameDescription(game.slug, translatedDesc, lang);
+const endlessClearTarget = getEndlessClearTarget(game.slug);
+
+const tUi = {
+  backToList: lang === 'en' ? "Back to Games List" : "ゲーム一覧に戻る",
+  difficulty: lang === 'en' ? "Difficulty" : "難易度",
+  restart: lang === 'en' ? "Restart" : "リスタート",
+  restartTooltip: lang === 'en' ? "Restart the game" : "ゲームをリスタートします",
+  fullscreen: lang === 'en' ? "Fullscreen" : "フルスクリーン",
+  fullscreenTooltip: lang === 'en' ? "Toggle fullscreen mode" : "フルスクリーン表示に切り替えます",
+  favorite: lang === 'en' ? "Favorite" : "お気に入り",
+  favorited: lang === 'en' ? "Favorited" : "お気に入り済み",
+  favoriteTooltip: lang === 'en' ? "Add this game to favorites" : "このゲームをお気に入りに追加します",
+  clearTarget: lang === 'en' ? "Clear target" : "クリア条件",
+  controls: lang === 'en' ? "Controls" : "操作方法",
+  loading: lang === 'en' ? "Initializing System..." : "システム初期化中...",
+  loadingControls: lang === 'en' ? "Loading controls..." : "操作方法を読み込み中..."
+};
+
+// ゲームごとのJSON-LDを動的に構築
+const canonicalUrl = `https://mini.7colorsgame.com/play/${game.slug}/`;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Game",
+      "@id": `${canonicalUrl}#game`,
+      "name": activeTitle,
+      "description": activeDesc,
+      "genre": category,
+      "playMode": "SinglePlayer",
+      "applicationCategory": "Game",
+      "operatingSystem": "Any"
+    },
+    {
+      "@type": "HowTo",
+      "@id": `${canonicalUrl}#howto`,
+      "name": lang === 'en' ? `Play ${activeTitle} Online Free` : `【インストール不要】${title}の遊び方・操作手順`,
+      "description": lang === 'en' ? `How to play ${activeTitle} online for free. Instructions and rules.` : `ブラウザで今すぐ無料で遊べる${title}の操作説明とルールです。`,
+      "step": [
+        {
+          "@type": "HowToStep",
+          "text": lang === 'en' ? "Click or tap on the game canvas to initialize and start." : "ゲーム画面をクリックまたはタップして初期化・スタートします。"
+        },
+        {
+          "@type": "HowToStep",
+          "text": lang === 'en' ? "Follow rules and steer controls to clear stages and reach high scores." : "操作方法やルールに沿ってプレイし、ハイスコアを目指します。"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${canonicalUrl}#faq`,
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": lang === 'en' ? `Can I play ${activeTitle} on mobile phones?` : `${title}はスマートフォンでもプレイ可能ですか？`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": lang === 'en' 
+              ? "Yes, it is fully compatible with touchscreen swipe and tap controls on mobile smartphones and tablets with no install needed."
+              : `はい、スマートフォンおよびタブレットのタッチ・スワイプ操作に完全対応しています。アプリのインストール不要で、Webブラウザ上で快適に動作します。`
+          }
+        },
+        {
+          "@type": "Question",
+          "name": lang === 'en' ? "Is there any charge or account registration needed?" : "プレイ料金や登録は必要ですか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": lang === 'en'
+              ? "No, it is 100% free with no account registrations or personal detail downloads required."
+              : "完全無料でプレイ可能です。ユーザー登録や個人情報の入力、ダウンロードの必要は一切ありません。"
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout title={activeTitle} description={activeDesc} sd={JSON.stringify(jsonLd)} lang={lang} showSideAds={true}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+    <!-- ナビゲーションヘッダー -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      <a 
+        href={lang === 'en' ? "/en/" : "/"} 
+        class="inline-flex items-center gap-2.5 text-sm font-bold text-slate-400 hover:text-white transition-colors group"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        {tUi.backToList}
+      </a>
+      
+      <div class="flex flex-wrap items-center justify-end gap-3">
+        <button
+          id="btn-favorite"
+          type="button"
+          class="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-rose-300/25 bg-slate-900/80 px-3 text-xs font-extrabold text-slate-200 shadow-md backdrop-blur-md transition hover:scale-105 hover:border-rose-300 hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+          title={tUi.favoriteTooltip}
+          aria-label={tUi.favoriteTooltip}
+          aria-pressed="false"
+          data-label-default={tUi.favorite}
+          data-label-selected={tUi.favorited}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
+          </svg>
+          <span data-favorite-label>{tUi.favorite}</span>
+        </button>
+        <div class="flex items-center gap-2" aria-label={lang === 'en' ? 'Game controls' : 'ゲーム操作'}>
+          <button 
+            id="btn-restart" 
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-fuchsia-300/25 bg-slate-900/80 text-white shadow-md backdrop-blur-md transition hover:scale-105 hover:border-fuchsia-300 hover:bg-fuchsia-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-300"
+            title={tUi.restartTooltip}
+            aria-label={tUi.restartTooltip}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v5h5" />
+            </svg>
+          </button>
+          <button 
+            id="btn-fullscreen" 
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-300/25 bg-slate-900/80 text-white shadow-md backdrop-blur-md transition hover:scale-105 hover:border-cyan-200 hover:bg-cyan-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+            title={tUi.fullscreenTooltip}
+            aria-label={tUi.fullscreenTooltip}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" />
+            </svg>
+          </button>
+        </div>
+        <span class="text-xs font-bold px-3.5 py-1.5 rounded-full bg-slate-900/60 backdrop-blur-md text-brand-accent border border-brand-primary/20">
+          {category}
+        </span>
+        <span class="text-xs font-bold px-3.5 py-1.5 rounded-full bg-slate-900/60 backdrop-blur-md text-slate-300 border border-slate-800/80">
+          {tUi.difficulty}: {difficulty}
+        </span>
+      </div>
+    </div>
+
+    <!-- ゲーム画面を横幅いっぱいに表示 -->
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-5">
+        <div 
+          id="game-container" 
+          data-game-id={game.slug}
+          data-lang={lang}
+          data-clear-score={endlessClearTarget || undefined}
+          data-controls-en={JSON.stringify(activeTranslation?.controlsEn || [])}
+          class="relative w-full aspect-[4/3] sm:aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl bg-slate-950/40 backdrop-blur-md border border-slate-800/80 p-0 flex items-center justify-center group/screen"
+        >
+          <!-- 背景ネオングローレイヤー -->
+          <div class="absolute -inset-4 bg-gradient-to-tr from-brand-primary/10 to-brand-accent/10 opacity-30 blur-2xl pointer-events-none group-hover/screen:opacity-50 transition-opacity duration-700"></div>
+
+          <!-- キャンバス -->
+          <canvas 
+            id="game-canvas" 
+            class="hidden w-full h-full object-contain block focus:outline-none z-10"
+            tabindex="0"
+          ></canvas>
+
+          <!-- ローディング・状態インジケータ -->
+          <div id="game-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-sm z-20 transition-opacity duration-300">
+            <div class="w-12 h-12 border-4 border-brand-accent border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p id="loader-text" class="text-sm font-bold text-slate-400">{tUi.loading}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ゲーム画面下の説明・操作方法 -->
+      <section class="group/panel relative overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-900/40 p-5 shadow-lg backdrop-blur-md sm:p-6">
+        <div class="absolute left-0 top-0 h-[2px] w-full bg-gradient-to-r from-brand-accent to-brand-primary"></div>
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)] lg:gap-10">
+          <div>
+            <h1 class="mb-3 text-2xl font-extrabold text-white transition-colors duration-300 group-hover/panel:text-brand-accent">{activeTitle}</h1>
+            <p class="text-sm font-medium leading-relaxed text-slate-400">{activeDesc}</p>
+            {endlessClearTarget > 0 && (
+              <p class="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-extrabold text-emerald-300">
+                <span aria-hidden="true">✓</span>
+                {tUi.clearTarget}: {endlessClearTarget.toLocaleString(lang === 'en' ? 'en-US' : 'ja-JP')} {lang === 'en' ? 'points' : '点以上'}
+              </p>
+            )}
+          </div>
+          <div class="border-t border-slate-800 pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+            <h2 class="mb-4 text-xs font-extrabold uppercase tracking-widest text-brand-accent select-none">{tUi.controls}</h2>
+            <div id="game-controls-instructions" class="grid gap-3 text-sm leading-relaxed text-slate-400 sm:grid-cols-2">
+              <p class="text-slate-500 italic">{tUi.loadingControls}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Google AdSense 広告をスマートに埋め込み -->
+    <AdSense className="mt-12" />
+  </div>
+</Layout>
+
+<script>
+  import { installCanvasTextI18n } from '../../lib/canvasTextI18n';
+
+  async function initGameContainer() {
+    const container = document.getElementById('game-container');
+    const loader = document.getElementById('game-loader');
+    const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+    const instructionBox = document.getElementById('game-controls-instructions');
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+    const btnRestart = document.getElementById('btn-restart');
+    const btnFavorite = document.getElementById('btn-favorite') as HTMLButtonElement | null;
+
+    if (!container || !canvas) return;
+
+    const gameId = container.dataset.gameId;
+    const lang = container.dataset.lang || 'ja';
+    const clearScore = Number(container.dataset.clearScore || 0);
+    const controlsEnRaw = container.dataset.controlsEn;
+    const controlsEn = controlsEnRaw ? JSON.parse(controlsEnRaw) : [];
+    let gameInstance: any = null;
+
+    const readFavorites = () => {
+      try { return JSON.parse(localStorage.getItem('ag-favorites') || '[]') as string[]; }
+      catch { localStorage.removeItem('ag-favorites'); return []; }
+    };
+    const paintFavorite = () => {
+      if (!btnFavorite || !gameId) return;
+      const selected = readFavorites().includes(gameId);
+      btnFavorite.setAttribute('aria-pressed', String(selected));
+      btnFavorite.classList.toggle('border-rose-300', selected);
+      btnFavorite.classList.toggle('bg-rose-500/20', selected);
+      btnFavorite.classList.toggle('text-rose-300', selected);
+      const icon = btnFavorite.querySelector('svg');
+      if (icon) icon.setAttribute('fill', selected ? 'currentColor' : 'none');
+      const label = btnFavorite.querySelector<HTMLElement>('[data-favorite-label]');
+      if (label) label.textContent = selected ? btnFavorite.dataset.labelSelected || '' : btnFavorite.dataset.labelDefault || '';
+    };
+    paintFavorite();
+    btnFavorite?.addEventListener('click', () => {
+      if (!gameId) return;
+      const favorites = readFavorites();
+      const selected = favorites.includes(gameId);
+      localStorage.setItem('ag-favorites', JSON.stringify(selected ? favorites.filter((id) => id !== gameId) : [...favorites, gameId]));
+      paintFavorite();
+      window.dispatchEvent(new CustomEvent('ag:favorites-changed'));
+    });
+
+    try {
+      // プレイするゲームモジュールのみを動的にインポート（Lazy Loading）
+      const gameModule = await import(`../../games/${gameId}/index.ts`);
+      
+      // ローダーを非表示、キャンバスを表示
+      if (loader) loader.style.opacity = '0';
+      setTimeout(() => { if (loader) loader.style.display = 'none'; }, 300);
+      canvas.classList.remove('hidden');
+
+      // 操作説明を注入
+      if (instructionBox) {
+        const controls = lang === 'en' && controlsEn.length > 0 ? controlsEn : (gameModule.controls || []);
+        instructionBox.innerHTML = controls.map((item: string) => `
+          <div class="flex items-start gap-2.5">
+            <span class="text-brand-accent font-extrabold select-none">•</span>
+            <span class="font-medium text-slate-300 text-sm leading-relaxed">${item}</span>
+          </div>
+        `).join('');
+      }
+
+      // ゲーム側へ言語設定を伝える
+      canvas.dataset.lang = lang;
+      const gameTitle = document.querySelector<HTMLElement>('h1')?.textContent?.trim() || 'Mini Game';
+      const markGameCleared = () => {
+        if (!gameId) return;
+        try {
+          const cleared = JSON.parse(localStorage.getItem('ag-cleared-games') || '[]') as string[];
+          if (cleared.includes(gameId)) return;
+          localStorage.setItem('ag-cleared-games', JSON.stringify([...cleared, gameId]));
+          window.dispatchEvent(new CustomEvent('ag:game-cleared', { detail: { gameId } }));
+        } catch {
+          localStorage.setItem('ag-cleared-games', JSON.stringify([gameId]));
+        }
+      };
+      const saveHighScore = (score: number) => {
+        if (!gameId) return;
+        try {
+          const scores = JSON.parse(localStorage.getItem('ag-high-scores') || '{}') as Record<string, number>;
+          if (score <= (scores[gameId] || 0)) return;
+          scores[gameId] = score;
+          localStorage.setItem('ag-high-scores', JSON.stringify(scores));
+        } catch {
+          localStorage.setItem('ag-high-scores', JSON.stringify({ [gameId]: score }));
+        }
+      };
+      installCanvasTextI18n(canvas, lang, gameTitle, markGameCleared, clearScore, saveHighScore);
+
+      // 以前のゲームインスタンスがあれば確実に破棄する（Vite HMRや多重読み込み対策）
+      if ((window as any).__currentGameInstance) {
+        try {
+          (window as any).__currentGameInstance.destroy?.();
+        } catch (e) {
+          console.error('以前のゲームインスタンスのクリーンアップに失敗しました:', e);
+        }
+      }
+
+      // ゲームインスタンス初期化
+      if (gameModule.init) {
+        gameInstance = gameModule.init(canvas);
+        (window as any).__currentGameInstance = gameInstance;
+      }
+
+      // リスタート制御
+      if (btnRestart && gameInstance && typeof gameInstance.restart === 'function') {
+        btnRestart.addEventListener('click', () => {
+          gameInstance.restart();
+          canvas.focus();
+        });
+      }
+
+      // フルスクリーン制御
+      if (btnFullscreen) {
+        btnFullscreen.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            container.requestFullscreen().catch(err => {
+              console.error(`フルスクリーンエラー: ${err.message}`);
+            });
+          } else {
+            document.exitFullscreen();
+          }
+        });
+      }
+    } catch (error) {
+      console.error('ゲームの動的ロードに失敗しました:', error);
+      if (loader) {
+        const errTitle = lang === 'en' ? 'An error occurred' : 'エラーが発生しました';
+        const errMsg = lang === 'en' ? 'Failed to load the game.' : 'ゲームの読み込みに失敗しました。';
+        loader.innerHTML = `
+          <div class="text-rose-500 font-bold mb-2">${errTitle}</div>
+          <p class="text-xs text-slate-500">${errMsg}</p>
+        `;
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initGameContainer);
+  document.addEventListener('astro:page-load', initGameContainer);
+
+  // ページ遷移前に確実にクリーンアップを実行
+  document.addEventListener('astro:before-swap', () => {
+    if ((window as any).__currentGameInstance) {
+      try {
+        (window as any).__currentGameInstance.destroy?.();
+      } catch (e) {
+        console.error('ページ遷移前のクリーンアップに失敗しました:', e);
+      }
+      (window as any).__currentGameInstance = null;
+    }
+  });
+</script>

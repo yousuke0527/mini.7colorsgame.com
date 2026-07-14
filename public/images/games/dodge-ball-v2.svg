@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- Background -->
+  <rect width="400" height="250" fill="url(#bg-grad)" />
+
+  <!-- Cybernetic Grid -->
+  <g opacity="0.05">
+    <path d="M 15 45 L 385 45 M 15 80 L 385 80 M 15 115 L 385 115 M 15 150 L 385 150 M 15 185 L 385 185" stroke="#ffffff" stroke-width="1" />
+    <path d="M 50 15 L 50 235 M 100 15 L 100 235 M 150 15 L 150 235 M 200 15 L 200 235 M 250 15 L 250 235 M 300 15 L 300 235 M 350 15 L 350 235" stroke="#ffffff" stroke-width="1" />
+  </g>
+
+  <!-- Outer Card Border with Purple Glow -->
+  <rect x="15" y="15" width="370" height="220" rx="16" fill="none" stroke="#a855f7" stroke-width="1.5" opacity="0.3" filter="url(#glow)" />
+
+  <!-- Shield Activation Wave (Concentric Ring) -->
+  <ellipse cx="230" cy="100" rx="35" ry="75" fill="none" stroke="#00f0ff" filter="url(#glow)" stroke-width="1" opacity="0.15" />
+
+  <!-- Player braced behind shield -->
+  <g transform="translate(10, 0)">
+    <!-- Braced Legs -->
+    <path d="M 285 115 L 270 145 L 300 170" fill="none" stroke="#a855f7" stroke-width="4.5" stroke-linecap="round" filter="url(#glow)" />
+    <path d="M 285 115 L 290 140 L 265 170" fill="none" stroke="#a855f7" stroke-width="4" stroke-linecap="round" filter="url(#glow)" opacity="0.8" />
+    
+    <!-- Torso (leaning forward) -->
+    <path d="M 292 82 L 285 115" stroke="#ffffff" stroke-width="5" stroke-linecap="round" filter="url(#glow)" />
+    
+    <!-- Shield-supporting arms -->
+    <path d="M 288 90 L 265 95 L 245 92" fill="none" stroke="#00f0ff" stroke-width="3" stroke-linecap="round" filter="url(#glow)" />
+    <path d="M 288 95 L 270 108 L 245 105" fill="none" stroke="#00f0ff" filter="url(#glow)" stroke-width="2.5" stroke-linecap="round" opacity="0.8" />
+
+    <!-- Helmet/Head -->
+    <circle cx="295" cy="72" r="8" fill="#090d16" stroke="#a855f7" stroke-width="2.5" filter="url(#glow)" />
+    <path d="M 288 72 A 6 6 0 0 1 300 72" fill="none" stroke="#ffffff" stroke-width="2" filter="url(#glow)" />
+  </g>
+
+  <!-- Hexagonal Shield Matrix -->
+  <g>
+    <!-- Semi-transparent Shield fill with Hex pattern -->
+    <path d="M 225 35 Q 260 100 225 165 C 220 165 218 160 218 160 Q 250 100 218 40 Z" fill="url(#hex-grid)" opacity="0.9" />
+    <!-- Glowing Outer Shield Edge -->
+    <path d="M 222 32 Q 258 100 222 168" fill="none" stroke="#00f0ff" stroke-width="4" filter="url(#glow)" stroke-linecap="round" />
+    <path d="M 222 32 Q 258 100 222 168" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Giant Energy Ball Colliding with Shield -->
+  <g>
+    <!-- incoming energy trail -->
+    <path d="M 50 60 Q 120 70 185 92" fill="none" stroke="#ff007f" stroke-width="5" stroke-linecap="round" filter="url(#glow)" opacity="0.6" />
+    <path d="M 60 62 Q 125 72 190 94" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" filter="url(#glow)" opacity="0.7" />
+
+    <!-- Deforming Impacting Energy Orb -->
+    <!-- Flattened against the shield boundary -->
+    <path d="M 160 100 C 160 78 180 84 210 93 C 215 96 215 104 210 107 C 180 116 160 122 160 100 Z" fill="#ff007f" fill-opacity="0.25" stroke="#ffffff" stroke-width="3" filter="url(#glow)" />
+    <path d="M 175 100 C 175 88 185 92 205 97 C 208 98 208 102 205 103 C 185 108 175 112 175 100 Z" fill="#eab308" opacity="0.4" filter="url(#glow)" />
+    
+    <!-- Shockwave Rings in front of impact -->
+    <path d="M 204 78 A 22 22 0 0 0 204 122" fill="none" stroke="#ffffff" stroke-width="2" filter="url(#glow)" />
+    <path d="M 194 65 A 36 36 0 0 0 194 135" fill="none" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="3,3" filter="url(#glow)" />
+  </g>
+
+  <!-- Deflected energy sparks shooting outwards -->
+  <g stroke-linecap="round" filter="url(#glow)">
+    <!-- Upward Deflected Ray -->
+    <path d="M 215 90 Q 180 55 140 45" fill="none" stroke="#eab308" stroke-width="3" />
+    <path d="M 213 87 Q 190 62 160 55" fill="none" stroke="#ffffff" stroke-width="1.5" />
+    
+    <!-- Downward Deflected Ray -->
+    <path d="M 215 110 Q 185 140 145 155" fill="none" stroke="#ff007f" filter="url(#glow)" stroke-width="3" />
+    
+    <!-- Tiny impact droplets/sparks -->
+    <circle cx="218" cy="80" r="2" fill="#ffffff" />
+    <circle cx="225" cy="74" r="1.5" fill="#00f0ff" />
+    <circle cx="210" cy="130" r="2.5" fill="#ff007f" />
+    <circle cx="220" cy="135" r="1.5" fill="#eab308" />
+  </g>
+
+  <!-- Title -->
+  
+  <!-- Category Badge -->
+  <rect x="150" y="210" width="100" height="18" rx="9" fill="#a855f7" opacity="0.2"/>
+</svg>

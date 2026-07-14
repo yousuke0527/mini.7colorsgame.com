@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- Background -->
+  <rect width="400" height="250" fill="url(#bg-grad)" />
+
+  <!-- Cyber Grid Background -->
+  <g opacity="0.04">
+    <path d="M 15 45 L 385 45 M 15 80 L 385 80 M 15 115 L 385 115 M 15 150 L 385 150 M 15 185 L 385 185" stroke="#ffffff" stroke-width="1" />
+    <path d="M 50 15 L 50 235 M 100 15 L 100 235 M 150 15 L 150 235 M 200 15 L 200 235 M 250 15 L 250 235 M 300 15 L 300 235 M 350 15 L 350 235" stroke="#ffffff" stroke-width="1" />
+  </g>
+
+  <!-- Outer Card Border with Green Glow -->
+  <rect x="15" y="15" width="370" height="220" rx="16" fill="none" stroke="#39ff14" stroke-width="1.5" opacity="0.3" filter="url(#glow)" />
+
+  <!-- Lanes Layout -->
+  <!-- River Zone (Blue flowing grid lines) -->
+  <rect x="15" y="55" width="370" height="40" fill="#00f0ff" fill-opacity="0.02" />
+  <line x1="15" y1="55" x2="385" y2="55" stroke="#00f0ff" stroke-width="1.5" opacity="0.3" filter="url(#glow)" />
+  <line x1="15" y1="95" x2="385" y2="95" stroke="#00f0ff" filter="url(#glow)" stroke-width="1" opacity="0.2" />
+
+  <!-- Cyber Road Zone (Purple dashed markings) -->
+  <rect x="15" y="115" width="370" height="40" fill="#a855f7" fill-opacity="0.02" />
+  <line x1="15" y1="115" x2="385" y2="115" stroke="#a855f7" stroke-width="1" opacity="0.2" />
+  <line x1="15" y1="135" x2="385" y2="135" stroke="#a855f7" stroke-width="1.5" opacity="0.3" stroke-dasharray="12,12" filter="url(#glow)" />
+  <line x1="15" y1="155" x2="385" y2="155" stroke="#a855f7" stroke-width="1.5" opacity="0.3" filter="url(#glow)" />
+
+  <!-- River Zone Obstacles (Cyber Floating Logs) -->
+  <g filter="url(#glow)">
+    <!-- Log 1 -->
+    <g transform="translate(180, 60)">
+      <rect x="0" y="2" width="90" height="26" rx="6" fill="#f59e0b" fill-opacity="0.08" stroke="#f59e0b" stroke-width="2" />
+      <line x1="15" y1="15" x2="75" y2="15" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,2" opacity="0.7" />
+      <circle cx="10" cy="15" r="2" fill="#ffffff" />
+      <circle cx="80" cy="15" r="2" fill="#ffffff" />
+    </g>
+    <!-- Log 2 (Background) -->
+    <g transform="translate(30, 60)" opacity="0.5">
+      <rect x="0" y="2" width="70" height="26" rx="6" fill="#f59e0b" fill-opacity="0.05" stroke="#f59e0b" stroke-width="1.5" />
+      <line x1="10" y1="15" x2="60" y2="15" stroke="#f59e0b" stroke-width="1" opacity="0.5" />
+    </g>
+  </g>
+
+  <!-- Highway Zone Obstacles (Cyber Cars) -->
+  <g filter="url(#glow)">
+    <!-- Hot Pink Cyber Car -->
+    <g transform="translate(240, 120)">
+      <!-- Car Body -->
+      <rect x="0" y="2" width="55" height="22" rx="4" fill="url(#car-pattern)" stroke="#ec4899" stroke-width="2" />
+      <!-- Cyber Wheels / Glow Nodes -->
+      <circle cx="12" cy="24" r="3" fill="#ffffff" stroke="#ec4899" stroke-width="1" />
+      <circle cx="43" cy="24" r="3" fill="#ffffff" stroke="#ec4899" stroke-width="1" />
+      <!-- Headlights -->
+      <polygon points="55,6 59,10 55,14" fill="#ffffff" />
+      <!-- Speed / Trail Lines -->
+      <path d="M -10 13 L -3 13 M -12 7 L -2 7" stroke="#ec4899" stroke-width="1.5" stroke-linecap="round" opacity="0.7" />
+    </g>
+    <!-- Cyan Cyber Car (Background) -->
+    <g transform="translate(60, 120)" opacity="0.6">
+      <rect x="0" y="2" width="50" height="22" rx="4" fill="#00f0ff" fill-opacity="0.05" stroke="#00f0ff" filter="url(#glow)" stroke-width="1.5" />
+      <circle cx="12" cy="24" r="2.5" fill="#00f0ff" />
+      <circle cx="38" cy="24" r="2.5" fill="#00f0ff" />
+      <path d="M -8 13 L -2 13" stroke="#00f0ff" filter="url(#glow)" stroke-width="1" />
+    </g>
+  </g>
+
+  <!-- Jump Trajectory and Glowing Frog -->
+  <g>
+    <!-- Dotted Jump Arc -->
+    <!-- From safe bottom (200, 175) to Log 1 (225, 75) -->
+    <path d="M 195 180 Q 170 120 215 76" fill="none" stroke="#39ff14" stroke-width="2" stroke-dasharray="3,6" opacity="0.7" filter="url(#glow)" />
+
+    <!-- Jumping Frog (Mid-air at 178, 122) -->
+    <g transform="translate(178, 118)" filter="url(#glow)">
+      <!-- Motion Ripple around Frog -->
+      <circle cx="0" cy="0" r="14" fill="none" stroke="#39ff14" filter="url(#glow)" stroke-width="1" opacity="0.3" stroke-dasharray="3,3" />
+
+      <!-- Extended Back Legs -->
+      <path d="M -8 6 Q -14 14 -10 20" fill="none" stroke="#39ff14" filter="url(#glow)" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 8 6 Q 14 14 10 20" fill="none" stroke="#39ff14" filter="url(#glow)" stroke-width="2.5" stroke-linecap="round" />
+      
+      <!-- Reaching Front Arms -->
+      <path d="M -6 -8 Q -12 -16 -6 -18" fill="none" stroke="#39ff14" filter="url(#glow)" stroke-width="2" stroke-linecap="round" />
+      <path d="M 6 -8 Q 12 -16 6 -18" fill="none" stroke="#39ff14" filter="url(#glow)" stroke-width="2" stroke-linecap="round" />
+
+      <!-- Frog Torso -->
+      <ellipse cx="0" cy="0" rx="9" ry="11" fill="#39ff14" fill-opacity="0.3" stroke="#ffffff" stroke-width="2.5" />
+      
+      <!-- Frog Eyes (Glowing White) -->
+      <circle cx="-5" cy="-8" r="3.5" fill="#ffffff" />
+      <circle cx="5" cy="-8" r="3.5" fill="#ffffff" />
+      <circle cx="-5" cy="-8" r="1.5" fill="#39ff14" />
+      <circle cx="5" cy="-8" r="1.5" fill="#39ff14" />
+    </g>
+  </g>
+
+  <!-- Title -->
+  
+  <!-- Category Badge -->
+  <rect x="150" y="210" width="100" height="18" rx="9" fill="#39ff14" opacity="0.2"/>
+</svg>

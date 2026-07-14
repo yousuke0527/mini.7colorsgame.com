@@ -1,0 +1,36 @@
+export const endlessClearTargets: Record<string, number> = {
+  'block-puzzle-1010': 1000,
+  'color-matching': 200,
+  'cyber-asteroids': 1000,
+  'cyber-bamboo-cut': 500,
+  'cyber-beat-slice': 2000,
+  'cyber-bullet-hell': 1000,
+  'cyber-catcher': 300,
+  'cyber-copter': 50,
+  'cyber-gravity-collector': 20,
+  'cyber-hex-block': 1000,
+  'cyber-hextris': 500,
+  'cyber-hoverboard-runner': 500,
+  'cyber-matrix-dodge': 300,
+  'cyber-meteor-dodge': 500,
+  'cyber-pinball': 1000,
+  'cyber-slither-neon': 50,
+  'cyber-space-evader': 500,
+  'cyber-typing-defence': 1000,
+  'cyber-typing-invaders': 1000,
+  'cyber-word-drop': 500,
+  'dino': 100,
+  'flappy': 10,
+  'neon-match3': 1000,
+  'racer': 100,
+  'snake': 100,
+  'stack': 15,
+  'tetris': 1000,
+  'tower-builder': 15,
+  'typing': 500,
+  'whack-a-mole': 300,
+};
+
+export function getEndlessClearTarget(gameId: string) {
+  return endlessClearTargets[gameId] || 0;
+}

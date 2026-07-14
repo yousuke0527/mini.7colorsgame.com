@@ -1,0 +1,21 @@
+---
+interface Props { lang?: string }
+const currentYear = new Date().getFullYear();
+const lang = Astro.props.lang === 'en' ? 'en' : 'ja';
+---
+<footer class="relative z-10 mt-auto border-t border-slate-800 bg-slate-950 py-8">
+  <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:px-6 md:flex-row lg:px-8">
+    <div class="flex flex-col gap-2.5 text-left">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-slate-400">Antigravity Games</span>
+        <span class="text-slate-600">|</span>
+        <span class="text-sm text-slate-500">{lang === 'en' ? 'Fast, lightweight mini games' : '軽量・高速ミニゲーム集'}</span>
+      </div>
+      <div class="space-y-1.5 text-xs leading-relaxed text-slate-500">
+        <p class="font-medium">{lang === 'en' ? 'Operated by: ' : '運営会社：'}<a href="https://7colorsgame.com/" target="_blank" rel="noopener noreferrer" class="text-slate-400 transition hover:text-white hover:underline">7ColorsGame LLC</a></p>
+        <p class="text-slate-600">{lang === 'en' ? 'Game development · Web production · Systems' : 'ゲーム開発・Web制作・システム開発'}</p>
+      </div>
+    </div>
+    <p class="text-center text-sm text-slate-500 md:text-right">&copy; {currentYear} Antigravity Games. Powered by Astro.</p>
+  </div>
+</footer>

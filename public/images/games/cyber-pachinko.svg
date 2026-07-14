@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+  <rect width="400" height="300" fill="#090d16" />
+  <rect width="380" height="280" x="10" y="10" rx="15" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" opacity="0.3" />
+
+  <!-- パチンコ物理シミュレーションイラスト -->
+  <g transform="translate(130, 20)">
+    <!-- プレイエリア枠 -->
+    <rect width="140" height="160" fill="#05070c" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)" />
+    
+    <!-- ランチャー路 -->
+    <line x1="125" y1="30" x2="125" y2="160" stroke="rgba(168, 85, 247, 0.4)" stroke-width="1" />
+    <path d="M 125, 30 Q 125, 10 105, 10" fill="none" stroke="rgba(168, 85, 247, 0.4)" stroke-width="1" />
+
+    <!-- ピン配置 (小さな丸) -->
+    <circle cx="35" cy="50" r="2.5" fill="#94a3b8" />
+    <circle cx="70" cy="50" r="2.5" fill="#94a3b8" />
+    <circle cx="105" cy="50" r="2.5" fill="#94a3b8" />
+
+    <circle cx="52.5" cy="70" r="2.5" fill="#94a3b8" />
+    <circle cx="87.5" cy="70" r="2.5" fill="#94a3b8" />
+
+    <circle cx="35" cy="90" r="2.5" fill="#94a3b8" />
+    <circle cx="70" cy="90" r="2.5" fill="#94a3b8" />
+    <circle cx="105" cy="90" r="2.5" fill="#94a3b8" />
+
+    <!-- 下部ポケット (緑) -->
+    <rect x="20" y="145" width="25" height="15" fill="rgba(16, 185, 129, 0.2)" stroke="#39ff14" stroke-width="1.5" filter="url(#glow)" />
+    <rect x="57.5" y="145" width="25" height="15" fill="rgba(16, 185, 129, 0.2)" stroke="#39ff14" stroke-width="1.5" filter="url(#glow)" />
+    <rect x="95" y="145" width="25" height="15" fill="rgba(16, 185, 129, 0.2)" stroke="#39ff14" stroke-width="1.5" filter="url(#glow)" />
+
+    <!-- 弾む光球 (水色) と軌跡 -->
+    <path d="M 120,10 C 100,10 65,30 52.5,70" fill="none" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1.5" stroke-dasharray="3,3" />
+    <circle cx="52.5" cy="65" r="5" fill="#00f0ff" filter="url(#glow)" />
+    
+    <path d="M 87.5,70 Q 75,90 70,140" fill="none" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1.5" stroke-dasharray="3,3" />
+    <circle cx="70" cy="115" r="5" fill="#00f0ff" filter="url(#glow)" />
+  </g>
+
+  <!-- タイトル -->
+</svg>

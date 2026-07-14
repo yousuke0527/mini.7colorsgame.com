@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+  <!-- 背景 -->
+  <rect width="400" height="300" fill="#090d16" />
+  <rect width="380" height="280" x="10" y="10" rx="15" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" opacity="0.3" />
+
+  <!-- アナグラムのシミュレーションイラスト (文字ブロックの入れ替え) -->
+  <g transform="translate(40, 30)">
+    <!-- 画面バウンディング枠 -->
+    <rect width="320" height="130" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" rx="4" />
+
+    <!-- 文字タイル 1: 'A' (シアン) -->
+    <g transform="translate(20, 35)">
+      <rect width="45" height="45" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="2" filter="url(#glow)" />
+      <text x="22.5" y="30" font-family="'Outfit', system-ui, sans-serif" font-size="22" font-weight="extrabold" fill="#ffffff" text-anchor="middle">A</text>
+    </g>
+
+    <!-- 文字タイル 2: 'G' (ピンク - スワップ対象で浮き上がっている) -->
+    <g transform="translate(80, 25)">
+      <rect width="45" height="45" rx="8" fill="#2e1065" stroke="#ec4899" stroke-width="2.5" filter="url(#glow)" />
+      <text x="22.5" y="30" font-family="'Outfit', system-ui, sans-serif" font-size="22" font-weight="extrabold" fill="#ffffff" text-anchor="middle">G</text>
+      <!-- 浮遊影 -->
+      <ellipse cx="22.5" cy="55" rx="15" ry="3" fill="#000" opacity="0.4" />
+    </g>
+
+    <!-- スワップ矢印 (ネオンパープル/ピンク) -->
+    <path d="M 112.5, 85 C 112.5, 105, 172.5, 105, 172.5, 85" fill="none" stroke="url(#neon-grad)" stroke-width="2.5" stroke-dasharray="4, 2" filter="url(#glow)" />
+    <path d="M 172.5, 85 L 167.5, 92 M 172.5, 85 L 177.5, 92" stroke="url(#neon-grad)" stroke-width="2.5" filter="url(#glow)" />
+    <path d="M 172.5, 20 C 172.5, 0, 112.5, 0, 112.5, 20" fill="none" stroke="url(#neon-grad)" stroke-width="2.5" stroke-dasharray="4, 2" filter="url(#glow)" />
+    <path d="M 112.5, 20 L 117.5, 13 M 112.5, 20 L 107.5, 13" stroke="url(#neon-grad)" stroke-width="2.5" filter="url(#glow)" />
+
+    <!-- 文字タイル 3: 'N' (ピンク - スワップ対象) -->
+    <g transform="translate(140, 25)">
+      <rect width="45" height="45" rx="8" fill="#2e1065" stroke="#ec4899" stroke-width="2.5" filter="url(#glow)" />
+      <text x="22.5" y="30" font-family="'Outfit', system-ui, sans-serif" font-size="22" font-weight="extrabold" fill="#ffffff" text-anchor="middle">N</text>
+      <!-- 浮遊影 -->
+      <ellipse cx="22.5" cy="55" rx="15" ry="3" fill="#000" opacity="0.4" />
+    </g>
+
+    <!-- 文字タイル 4: 'M' (シアン) -->
+    <g transform="translate(200, 35)">
+      <rect width="45" height="45" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="2" filter="url(#glow)" />
+      <text x="22.5" y="30" font-family="'Outfit', system-ui, sans-serif" font-size="22" font-weight="extrabold" fill="#ffffff" text-anchor="middle">M</text>
+    </g>
+
+    <!-- 文字タイル 5: 'R' (シアン) -->
+    <g transform="translate(260, 35)">
+      <rect width="45" height="45" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="2" filter="url(#glow)" />
+      <text x="22.5" y="30" font-family="'Outfit', system-ui, sans-serif" font-size="22" font-weight="extrabold" fill="#ffffff" text-anchor="middle">R</text>
+    </g>
+  </g>
+
+  <!-- タイトル・カテゴリ -->
+</svg>

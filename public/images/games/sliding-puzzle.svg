@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- カードの基本背景 -->
+  <rect width="400" height="250" rx="12" fill="#090d16" />
+  <rect x="6" y="6" width="388" height="238" rx="10" fill="#0f172a" stroke="#eab308" stroke-width="1.5" opacity="0.4" />
+
+  <!-- スライドパズルアートワーク -->
+  <g transform="translate(115, 12)">
+    <!-- パズル外枠 -->
+    <rect x="0" y="0" width="170" height="150" rx="8" fill="#0d1220" stroke="#eab308" stroke-width="2" filter="url(#neon-glow-yellow)" />
+    
+    <!-- 内側グリッド線（薄く） -->
+    <line x1="42.5" y1="0" x2="42.5" y2="150" stroke="#eab308" stroke-width="0.5" opacity="0.2" />
+    <line x1="85" y1="0" x2="85" y2="150" stroke="#eab308" stroke-width="0.5" opacity="0.2" />
+    <line x1="127.5" y1="0" x2="127.5" y2="150" stroke="#eab308" stroke-width="0.5" opacity="0.2" />
+    <line x1="0" y1="50" x2="170" y2="50" stroke="#eab308" stroke-width="0.5" opacity="0.2" />
+    <line x1="0" y1="100" x2="170" y2="100" stroke="#eab308" stroke-width="0.5" opacity="0.2" />
+
+    <!-- パズルピースタイル (ゴールド/イエローネオン) -->
+    <!-- Tile 1 -->
+    <g transform="translate(5, 5)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">1</text>
+    </g>
+    <!-- Tile 2 -->
+    <g transform="translate(47.5, 5)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">2</text>
+    </g>
+    <!-- Tile 3 -->
+    <g transform="translate(90, 5)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">3</text>
+    </g>
+    <!-- Tile 4 -->
+    <g transform="translate(132.5, 5)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">4</text>
+    </g>
+
+    <!-- Tile 5 -->
+    <g transform="translate(5, 55)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">5</text>
+    </g>
+    <!-- Tile 6 -->
+    <g transform="translate(47.5, 55)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">6</text>
+    </g>
+    <!-- Tile 7 -->
+    <g transform="translate(90, 55)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">7</text>
+    </g>
+    <!-- Tile 8 (スライド中の残像モーショントレイル) -->
+    <g transform="translate(132.5, 75)" opacity="0.3">
+      <rect width="32.5" height="40" rx="4" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="2 2" />
+    </g>
+    <!-- Tile 8 (実際のスライド中のタイル：シアンネオンで強調) -->
+    <g transform="translate(132.5, 65)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#22d3ee" stroke-width="2" filter="url(#neon-glow-cyan)" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-cyan)">8</text>
+      <!-- 移動方向の小さな矢印 -->
+      <path d="M 16.25,33 L 16.25,38 M 13.25,36 L 16.25,39 L 19.25,36" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+
+    <!-- Tile 9 -->
+    <g transform="translate(5, 105)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">9</text>
+    </g>
+    <!-- Tile 10 -->
+    <g transform="translate(47.5, 105)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">10</text>
+    </g>
+    <!-- Tile 11 -->
+    <g transform="translate(90, 105)">
+      <rect width="32.5" height="40" rx="4" fill="url(#tile-grad)" stroke="#eab308" stroke-width="1.5" />
+      <text x="16.25" y="25" font-family="'Outfit', sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#neon-glow-yellow)">11</text>
+    </g>
+    
+    <!-- 空きスペース (点線ネオングリッド枠) -->
+    <g transform="translate(132.5, 105)">
+      <rect width="32.5" height="40" rx="4" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.6" filter="url(#neon-glow-cyan)" />
+      <!-- スパーク/ロックオン風の四隅のL字 -->
+      <path d="M 4,4 L 4,8 M 4,4 L 8,4" fill="none" stroke="#22d3ee" stroke-width="1.5" />
+      <path d="M 28.5,4 L 28.5,8 M 28.5,4 L 24.5,4" fill="none" stroke="#22d3ee" stroke-width="1.5" />
+      <path d="M 4,36 L 4,32 M 4,36 L 8,36" fill="none" stroke="#22d3ee" stroke-width="1.5" />
+      <path d="M 28.5,36 L 28.5,32 M 28.5,36 L 24.5,36" fill="none" stroke="#22d3ee" stroke-width="1.5" />
+    </g>
+  </g>
+
+  <!-- タイトル -->
+  
+  <!-- カテゴリバッジ -->
+  <rect x="165" y="210" width="70" height="18" rx="9" fill="#eab308" opacity="0.2"/>
+</svg>

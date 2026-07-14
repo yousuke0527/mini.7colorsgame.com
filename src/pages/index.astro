@@ -1,0 +1,327 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import GameCard from '../components/GameCard.astro';
+import { simpleGameDescription, simpleGameTitle } from '../lib/gameCopy';
+
+const games = (await getCollection('games')).sort((a, b) =>
+  new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime(),
+);
+const lang = Astro.url.pathname === '/en/' || Astro.url.pathname.startsWith('/en/') || Astro.url.searchParams.get('lang') === 'en' ? 'en' : 'ja';
+const featuredIds = ['cyber-asteroids', 'neon-match3', 'color-connection'];
+const featuredGames = featuredIds.map((id) => games.find((game) => game.slug === id)).filter(Boolean);
+
+function gameGroup(category: string) {
+  const value = category.toLowerCase();
+  if (/action|arcade|shoot|sports|runner|アクション|シューティング/.test(value)) return 'action';
+  if (/card|board|table|casino|カード|ボード|テーブル/.test(value)) return 'board';
+  if (/brain|memory|math|word|typing|脳|記憶|計算|言葉/.test(value)) return 'brain';
+  return 'puzzle';
+}
+
+const canonicalUrl = 'https://mini.7colorsgame.com/';
+const title = lang === 'en'
+  ? 'Free Instant Browser Mini Games | Antigravity Games'
+  : '無料ブラウザミニゲーム｜インストール不要のAntigravity Games';
+const description = lang === 'en'
+  ? `${games.length} lightweight mini games. No install or sign-up—just choose and play.`
+  : `インストールも登録も不要。${games.length}本の軽いミニゲームを、ブラウザですぐに遊べます。`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: lang === 'en' ? 'Free browser games' : '無料ブラウザゲーム',
+  numberOfItems: games.length,
+  itemListElement: games.map((game, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: simpleGameTitle(game.data.title, lang, game.slug),
+    url: `${canonicalUrl}play/${game.slug}/`,
+  })),
+};
+
+const t = lang === 'en' ? {
+  line1: 'Pick a game.',
+  line2: 'Play in a second.',
+  play: 'Play a game now',
+  browse: 'Browse all games',
+  picks: 'Today’s quick picks',
+  picksDesc: 'Three games you can start right away.',
+  library: 'Mini game library',
+  libraryDesc: 'What do you feel like playing?',
+  search: 'Search games…',
+  all: 'All', puzzle: 'Puzzle', action: 'Action', board: 'Board & cards', brain: 'Brain games', ranking: 'Ranking', favorites: 'Favorites',
+  noResults: 'No games matched. Try another filter.',
+} : {
+  line1: 'えらんだら、',
+  line2: '1秒でゲーム開始。',
+  play: 'ゲームをえらぶ',
+  browse: 'ぜんぶ見る',
+  picks: '今日のおすすめ3本',
+  picksDesc: 'まよったら、ここからあそんでみよう！',
+  library: 'ミニゲームひろば',
+  libraryDesc: '今日はどんなゲームであそぶ？',
+  search: 'ゲームをさがす…',
+  all: 'すべて', puzzle: 'パズル', action: 'アクション', board: 'ボード・カード', brain: '脳トレ', ranking: 'ランキング', favorites: 'お気に入り',
+  noResults: 'ゲームが見つかりません。ちがう条件でさがしてみよう。',
+};
+---
+
+<Layout lang={lang} title={title} description={description} sd={JSON.stringify(jsonLd)} showSideAds={true}>
+  <main class="overflow-x-clip">
+    <section class="hero-arcade relative isolate border-b border-cyan-300/15">
+      <div class="stars absolute inset-0 -z-20"></div>
+      <div class="absolute -left-32 top-20 -z-10 h-96 w-96 rounded-full bg-fuchsia-600/20 blur-[100px]"></div>
+      <div class="absolute -right-20 top-0 -z-10 h-[32rem] w-[32rem] rounded-full bg-blue-600/25 blur-[120px]"></div>
+      <div class="absolute inset-x-0 bottom-0 -z-10 h-52 bg-gradient-to-t from-[#020617] to-transparent"></div>
+
+      <div class="mx-auto grid min-h-[640px] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:px-8 lg:py-20">
+        <div class="relative z-10 lg:col-span-7">
+          <h1 class="max-w-3xl text-5xl font-black leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            {t.line1}<br />
+            <span class="neon-title">{t.line2}</span>
+          </h1>
+          <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+            <a href="#games-heading" class="cta-primary inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-base font-black text-white">
+              <span>⚡</span>{t.play}<span>→</span>
+            </a>
+            <a href="#all-games" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/30 bg-[#071027]/75 px-8 py-4 text-base font-black text-cyan-50 backdrop-blur-md transition hover:border-cyan-200 hover:bg-cyan-400/10">
+              <span>🎮</span>{t.browse}
+            </a>
+          </div>
+        </div>
+
+        <div class="relative flex min-h-[440px] items-center justify-center lg:col-span-5">
+          <div class="robot-orbit absolute h-[420px] w-[420px] max-w-full rounded-full border border-cyan-300/20"></div>
+          <div class="absolute h-[330px] w-[330px] rounded-full bg-gradient-to-br from-fuchsia-500/30 via-violet-500/10 to-cyan-400/30 blur-2xl"></div>
+          <svg viewBox="0 0 300 300" class="hero-robot relative z-10 w-[390px] max-w-full drop-shadow-[0_20px_35px_rgba(34,211,238,.38)]" role="img" aria-label="Antigravity game robot">
+            <defs>
+              <linearGradient id="helmet" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#8b5cf6"/><stop offset="1" stop-color="#2563eb"/></linearGradient>
+              <linearGradient id="body" x1="0" x2="1"><stop stop-color="#4f46e5"/><stop offset="1" stop-color="#9333ea"/></linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <path d="M115 242 Q150 296 185 242" fill="#22d3ee" opacity=".8" filter="url(#glow)"/>
+            <ellipse cx="150" cy="194" rx="61" ry="66" fill="url(#body)" stroke="#a5f3fc" stroke-width="3"/>
+            <path d="M104 188 Q69 192 61 223" fill="none" stroke="#818cf8" stroke-width="24" stroke-linecap="round"/>
+            <path d="M196 188 Q230 180 244 147" fill="none" stroke="#818cf8" stroke-width="24" stroke-linecap="round"/>
+            <circle cx="62" cy="226" r="16" fill="#c4b5fd"/><circle cx="245" cy="145" r="16" fill="#c4b5fd"/>
+            <rect x="67" y="51" width="166" height="127" rx="62" fill="url(#helmet)" stroke="#c4b5fd" stroke-width="4"/>
+            <rect x="83" y="72" width="134" height="83" rx="41" fill="#020617" stroke="#f0abfc" stroke-width="4" filter="url(#glow)"/>
+            <ellipse cx="117" cy="113" rx="12" ry="22" fill="#22d3ee" filter="url(#glow)"/>
+            <path d="M165 115 Q181 98 194 114" fill="none" stroke="#22d3ee" stroke-width="9" stroke-linecap="round" filter="url(#glow)"/>
+            <path d="M139 139 Q151 149 163 139" fill="none" stroke="#f0abfc" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <span class="float-chip chip-one">◆</span><span class="float-chip chip-two">＋</span><span class="float-chip chip-three">●</span>
+        </div>
+      </div>
+
+      <div class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+        <div class="grid overflow-hidden rounded-3xl border border-cyan-300/30 bg-[#071027]/80 shadow-[0_0_50px_rgba(34,211,238,.12)] backdrop-blur-xl sm:grid-cols-4">
+          <div class="stat-box"><strong>{games.length}</strong><span>{lang === 'en' ? 'hand-picked games' : 'えらべるゲーム'}</span></div>
+          <div class="stat-box"><strong class="stat-copy">{lang === 'en' ? 'No install' : 'インストールなし'}</strong></div>
+          <div class="stat-box"><strong class="stat-copy">{lang === 'en' ? 'All free' : 'ぜんぶ無料'}</strong></div>
+          <div class="stat-box"><strong>1 click</strong><span>{lang === 'en' ? 'to start playing' : 'ですぐスタート'}</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="games-heading" class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="mb-8 text-center">
+        <span class="text-xs font-black tracking-[.25em] text-fuchsia-400">QUICK PICKS</span>
+        <h2 class="mt-3 text-3xl font-black text-white sm:text-4xl">{t.picks}</h2>
+        <p class="mt-3 font-semibold text-slate-400">{t.picksDesc}</p>
+      </div>
+      <div class="grid gap-7 md:grid-cols-3">
+        {featuredGames.map((game) => game && (
+          <GameCard id={game.slug} title={game.data.title} description={game.data.description} thumbnail={game.data.thumbnail} category={game.data.category} difficulty={game.data.difficulty} platform={game.data.platform} publishDate={game.data.publishDate} lang={lang} featured={true} />
+        ))}
+      </div>
+    </section>
+
+    <section id="all-games" class="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8">
+      <div class="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <span class="text-xs font-black tracking-[.25em] text-cyan-400">GAME LIBRARY</span>
+          <h2 class="mt-2 text-3xl font-black text-white sm:text-4xl">{t.library}</h2>
+          <p class="mt-2 font-semibold text-slate-400">{t.libraryDesc}</p>
+        </div>
+        <div id="visible-count" class="text-sm font-black text-cyan-300">{games.length} GAMES</div>
+      </div>
+
+      <div class="sticky top-16 z-40 mb-9 rounded-3xl border border-violet-400/25 bg-[#071027]/95 p-4 shadow-[0_18px_50px_rgba(2,6,23,.7)] backdrop-blur-xl sm:p-5">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div class="flex flex-wrap gap-2" id="game-filters">
+            <button class="filter-pill is-active" data-filter="all">✨ {t.all}</button>
+            <button class="filter-pill" data-filter="puzzle">🧩 {t.puzzle}</button>
+            <button class="filter-pill" data-filter="action">⚡ {t.action}</button>
+            <button class="filter-pill" data-filter="board">🎴 {t.board}</button>
+            <button class="filter-pill" data-filter="brain">🧠 {t.brain}</button>
+            <button class="filter-pill" data-filter="ranking">🏆 {t.ranking}</button>
+            <button class="filter-pill" data-filter="favorites">♥ {t.favorites}</button>
+          </div>
+          <label class="relative block min-w-0 lg:w-72">
+            <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">⌕</span>
+            <input id="game-search" type="search" placeholder={t.search} class="w-full rounded-2xl border border-cyan-300/20 bg-[#020617]/80 py-3 pl-11 pr-4 text-sm font-bold text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/60" />
+          </label>
+        </div>
+      </div>
+
+      <div id="games-grid" class="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+        {games.map((game) => (
+          <div class="game-card-wrapper card-waiting" data-group={gameGroup(game.data.category)} data-id={game.slug} data-order={games.indexOf(game)} data-search={`${simpleGameTitle(game.data.title, lang, game.slug)} ${simpleGameDescription(game.slug, game.data.description, lang)}`.toLowerCase()}>
+            <GameCard id={game.slug} title={game.data.title} description={game.data.description} thumbnail={game.data.thumbnail} category={game.data.category} difficulty={game.data.difficulty} platform={game.data.platform} publishDate={game.data.publishDate} lang={lang} />
+          </div>
+        ))}
+      </div>
+      <p id="no-results" class="hidden rounded-3xl border border-dashed border-slate-700 py-16 text-center font-bold text-slate-400">{t.noResults}</p>
+    </section>
+  </main>
+
+  <script>
+    function setupLibrary() {
+      const cards = Array.from(document.querySelectorAll<HTMLElement>('.game-card-wrapper'));
+      const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.filter-pill'));
+      const search = document.querySelector<HTMLInputElement>('#game-search');
+      const count = document.querySelector<HTMLElement>('#visible-count');
+      const noResults = document.querySelector<HTMLElement>('#no-results');
+      const grid = document.querySelector<HTMLElement>('#games-grid');
+      let active = 'all';
+
+      const readList = (key: string) => {
+        try { return JSON.parse(localStorage.getItem(key) || '[]') as string[]; }
+        catch { localStorage.removeItem(key); return []; }
+      };
+      const getFavorites = () => readList('ag-favorites');
+      const getClearedGames = () => readList('ag-cleared-games');
+      const paintClearLabels = () => {
+        const cleared = getClearedGames();
+        document.querySelectorAll<HTMLElement>('[data-clear-label]').forEach((label) => {
+          const isCleared = cleared.includes(label.dataset.clearLabel || '');
+          label.classList.toggle('hidden', !isCleared);
+          label.classList.toggle('inline-flex', isCleared);
+        });
+      };
+      const getPlayCounts = () => {
+        try { return JSON.parse(localStorage.getItem('ag-play-counts') || '{}') as Record<string, number>; }
+        catch { localStorage.removeItem('ag-play-counts'); return {}; }
+      };
+      const sortCards = () => {
+        if (!grid) return;
+        const counts = getPlayCounts();
+        [...cards].sort((a, b) => {
+          if (active === 'ranking') {
+            const score = (counts[b.dataset.id || ''] || 0) - (counts[a.dataset.id || ''] || 0);
+            if (score !== 0) return score;
+          }
+          return Number(a.dataset.order || 0) - Number(b.dataset.order || 0);
+        }).forEach((card) => grid.appendChild(card));
+      };
+      const apply = () => {
+        const query = (search?.value || '').trim().toLowerCase();
+        const favorites = getFavorites();
+        let visible = 0;
+        cards.forEach((card) => {
+          const matchesGroup = active === 'all' || active === 'ranking' || (active === 'favorites' ? favorites.includes(card.dataset.id || '') : card.dataset.group === active);
+          const matchesSearch = !query || (card.dataset.search || '').includes(query);
+          const show = matchesGroup && matchesSearch;
+          card.classList.toggle('hidden', !show);
+          if (show) visible += 1;
+        });
+        if (count) count.textContent = `${visible} GAMES`;
+        noResults?.classList.toggle('hidden', visible !== 0);
+        sortCards();
+      };
+
+      const activateMode = (mode: string, scroll = false) => {
+        active = mode;
+        buttons.forEach((item) => item.classList.toggle('is-active', item.dataset.filter === mode));
+        apply();
+        if (scroll) document.querySelector('#all-games')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      buttons.forEach((button) => button.addEventListener('click', () => {
+        activateMode(button.dataset.filter || 'all');
+      }));
+      search?.addEventListener('input', apply);
+      document.querySelectorAll<HTMLButtonElement>('[data-fav-btn]').forEach((button) => {
+        const id = button.dataset.favBtn || '';
+        const paint = () => {
+          const selected = getFavorites().includes(id);
+          button.textContent = selected ? '♥' : '♡';
+          button.classList.toggle('text-rose-400', selected);
+        };
+        paint();
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          const favorites = getFavorites();
+          localStorage.setItem('ag-favorites', JSON.stringify(favorites.includes(id) ? favorites.filter((item) => item !== id) : [...favorites, id]));
+          document.querySelectorAll<HTMLButtonElement>(`[data-fav-btn="${id}"]`).forEach((item) => {
+            item.textContent = getFavorites().includes(id) ? '♥' : '♡';
+            item.classList.toggle('text-rose-400', getFavorites().includes(id));
+          });
+          window.dispatchEvent(new CustomEvent('ag:favorites-changed'));
+          apply();
+        });
+      });
+
+      document.querySelectorAll<HTMLAnchorElement>('[data-game-link]').forEach((link) => link.addEventListener('click', () => {
+        const id = link.dataset.gameLink || '';
+        const counts = getPlayCounts();
+        counts[id] = (counts[id] || 0) + 1;
+        localStorage.setItem('ag-play-counts', JSON.stringify(counts));
+      }));
+
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('card-visible');
+          entry.target.classList.remove('card-waiting');
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+      cards.forEach((card) => revealObserver.observe(card));
+
+      const applyHashMode = () => {
+        if (location.hash === '#favorites') activateMode('favorites', true);
+        else if (location.hash === '#ranking') activateMode('ranking', true);
+        else apply();
+      };
+      window.addEventListener('hashchange', applyHashMode);
+      window.addEventListener('ag:game-cleared', paintClearLabels);
+      window.addEventListener('storage', (event) => {
+        if (event.key === 'ag-cleared-games') paintClearLabels();
+      });
+      paintClearLabels();
+      applyHashMode();
+    }
+    document.addEventListener('DOMContentLoaded', setupLibrary);
+    document.addEventListener('astro:page-load', setupLibrary);
+  </script>
+
+  <style>
+    .hero-arcade { background: linear-gradient(135deg, #020617 0%, #07062a 48%, #071631 100%); }
+    .stars { background-image: radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.6px), radial-gradient(circle, rgba(34,211,238,.8) 1px, transparent 1.8px), radial-gradient(circle, rgba(232,121,249,.7) 1px, transparent 1.8px); background-position: 0 0, 40px 60px, 120px 20px; background-size: 130px 130px, 170px 170px, 210px 210px; opacity: .55; mask-image: linear-gradient(to bottom, black 0%, transparent 95%); }
+    .neon-title { color: transparent; background: linear-gradient(90deg,#f472d0 0%,#c084fc 35%,#67e8f9 75%,#5eead4 100%); background-clip: text; -webkit-background-clip: text; filter: drop-shadow(0 0 20px rgba(217,70,239,.35)); }
+    .cta-primary { background: linear-gradient(100deg,#ec4899,#8b5cf6 58%,#06b6d4); box-shadow: 0 0 0 1px rgba(255,255,255,.16) inset, 0 14px 38px rgba(168,85,247,.38); transition: transform .2s, filter .2s; }
+    .cta-primary:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.15); }
+    .hero-robot { animation: robot-float 5s ease-in-out infinite; }
+    .robot-orbit { box-shadow: 0 0 90px rgba(34,211,238,.16) inset; animation: orbit-spin 16s linear infinite; }
+    .robot-orbit::before,.robot-orbit::after { content:''; position:absolute; width:14px; height:14px; border-radius:999px; background:#f0abfc; box-shadow:0 0 22px #d946ef; }
+    .robot-orbit::before { left:32px; top:52px; }.robot-orbit::after { right:20px; bottom:72px; background:#22d3ee; box-shadow:0 0 22px #22d3ee; }
+    .float-chip { position:absolute; display:grid; place-items:center; width:48px; height:48px; border:1px solid rgba(103,232,249,.35); border-radius:14px; background:rgba(7,16,39,.75); color:#67e8f9; box-shadow:0 0 26px rgba(34,211,238,.2); backdrop-filter:blur(10px); animation:chip-float 4s ease-in-out infinite; }
+    .chip-one{left:4%;top:18%}.chip-two{right:2%;top:28%;animation-delay:-1s;color:#f0abfc}.chip-three{left:8%;bottom:12%;animation-delay:-2s;color:#fbbf24}
+    .stat-box { display:flex; min-height:110px; align-items:center; justify-content:center; gap:14px; padding:24px; border-right:1px solid rgba(103,232,249,.14); }
+    .stat-box:last-child{border-right:0}.stat-box strong{font-size:1.75rem;color:#67e8f9;font-weight:900}.stat-box strong.stat-copy{font-size:clamp(1rem,1.7vw,1.35rem);white-space:nowrap}.stat-box span{max-width:110px;font-size:.75rem;line-height:1.4;font-weight:800;color:#94a3b8}
+    .filter-pill { border:1px solid rgba(148,163,184,.16); border-radius:999px; background:rgba(15,23,42,.8); padding:.65rem 1rem; color:#94a3b8; font-size:.75rem; font-weight:900; transition:.2s; }
+    .filter-pill:hover,.filter-pill.is-active { border-color:rgba(232,121,249,.65); color:white; background:linear-gradient(90deg,rgba(217,70,239,.25),rgba(6,182,212,.2)); box-shadow:0 0 24px rgba(217,70,239,.13); }
+    .card-waiting { opacity:0; transform:translateY(70px) scale(.72) rotate(-5deg); }
+    .game-card-wrapper:nth-child(3n+2).card-waiting { transform:translateY(76px) scale(.7) rotate(5deg); }
+    .game-card-wrapper:nth-child(3n).card-waiting { transform:translateY(66px) scale(.74) rotate(-2deg); }
+    .card-visible { animation:card-pop-in .78s cubic-bezier(.2,1.45,.42,1) both; }
+    @keyframes robot-float { 0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-18px) rotate(1deg)} }
+    @keyframes orbit-spin { to{transform:rotate(360deg)} }
+    @keyframes chip-float { 0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(5deg)} }
+    @keyframes card-pop-in { 0%{opacity:0;transform:translateY(70px) scale(.7) rotate(-5deg)}58%{opacity:1;transform:translateY(-12px) scale(1.045) rotate(2deg)}78%{transform:translateY(5px) scale(.985) rotate(-1deg)}100%{opacity:1;transform:none} }
+    @media(max-width:639px){.stat-box{border-right:0;border-bottom:1px solid rgba(103,232,249,.14)}.stat-box:last-child{border-bottom:0}}
+    @media(prefers-reduced-motion:reduce){.hero-robot,.robot-orbit,.float-chip,.card-visible{animation:none}.card-waiting{opacity:1;transform:none}}
+  </style>
+</Layout>

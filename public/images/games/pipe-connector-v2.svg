@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- カードの基本背景 -->
+  <rect width="400" height="250" rx="12" fill="#090d16" />
+  <rect x="6" y="6" width="388" height="238" rx="10" fill="#0f172a" stroke="#fbbf24" stroke-width="1.5" opacity="0.4" />
+
+  <!-- 背景グリッド -->
+  <g opacity="0.1">
+    <path d="M 50,20 L 50,170 M 100,20 L 100,170 M 150,20 L 150,170 M 200,20 L 200,170 M 250,20 L 250,170 M 300,20 L 300,170 M 350,20 L 350,170" stroke="#fbbf24" stroke-width="1" />
+    <path d="M 30,50 L 370,50 M 30,100 L 370,100 M 30,150 L 370,150" stroke="#fbbf24" stroke-width="1" />
+  </g>
+
+  <!-- 配管アートワーク（立体交差・複数カラー） -->
+  <g transform="translate(30, -5)">
+    <!-- 1. 紫パイプライン（下層：少し暗め） -->
+    <path d="M 60,130 L 120,130 A 15,15 0 0 0 135,115 L 135,65 A 15,15 0 0 1 150,50 L 270,50" 
+          fill="none" stroke="url(#pipe-purple)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon-glow-purple)" opacity="0.75" />
+    
+    <!-- 2. マゼンタパイプライン（中層） -->
+    <path d="M 100,40 L 100,75 A 15,15 0 0 0 115,90 L 225,90 A 15,15 0 0 1 240,105 L 240,140" 
+          fill="none" stroke="url(#pipe-magenta)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon-glow-magenta)" />
+
+    <!-- 立体交差部分の影（マゼンタとゴールドの交差） -->
+    <!-- ゴールドパイプ（最上層：手前を通り、グローが強くかかる） -->
+    <path d="M 80,80 L 160,80 A 15,15 0 0 1 175,95 L 175,115 A 15,15 0 0 0 190,130 L 280,130" 
+          fill="none" stroke="url(#pipe-gold)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon-glow-gold)" />
+
+    <!-- パイプ接続バルブ/端点 -->
+    <circle cx="80" cy="80" r="9" fill="#0f172a" stroke="#fbbf24" stroke-width="2.5" filter="url(#neon-glow-gold)" />
+    <circle cx="80" cy="80" r="3" fill="#fbbf24" />
+    <circle cx="280" cy="130" r="9" fill="#0f172a" stroke="#fbbf24" stroke-width="2.5" filter="url(#neon-glow-gold)" />
+    <circle cx="280" cy="130" r="3" fill="#fbbf24" />
+
+    <circle cx="100" cy="40" r="8" fill="#0f172a" stroke="#f472b6" stroke-width="2.5" filter="url(#neon-glow-magenta)" />
+    <circle cx="240" cy="140" r="8" fill="#0f172a" stroke="#f472b6" stroke-width="2.5" filter="url(#neon-glow-magenta)" />
+
+    <!-- エネルギー流パルス -->
+    <path d="M 95,80 L 155,80 A 10,10 0 0 1 165,90 L 165,120 A 20,20 0 0 0 185,130 L 265,130" 
+          fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="6 20" opacity="0.9" />
+
+    <!-- 交差結合ディテール（ジャンクションボックス） -->
+    <g transform="translate(135, 90)" opacity="0.9">
+      <rect x="-6" y="-6" width="12" height="12" rx="2" fill="#0f172a" stroke="#fbbf24" stroke-width="1.5" filter="url(#neon-glow-gold)" />
+      <circle cx="0" cy="0" r="2" fill="#fbbf24" />
+    </g>
+    
+    <!-- 圧力インジケーター（メーター） -->
+    <g transform="translate(210, 130)">
+      <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#22d3ee" stroke-width="1.5" />
+      <line x1="0" y1="0" x2="5" y2="-5" stroke="#22d3ee" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="1.5" fill="#22d3ee" />
+    </g>
+  </g>
+
+  <!-- タイトル -->
+  
+  <!-- カテゴリバッジ -->
+  <rect x="155" y="210" width="90" height="18" rx="9" fill="#fbbf24" opacity="0.2"/>
+</svg>

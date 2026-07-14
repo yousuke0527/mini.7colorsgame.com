@@ -1,0 +1,273 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  sd?: string; // 構造化データ用JSON文字列
+  lang?: string; // 言語 ("ja" または "en")
+  showSideAds?: boolean; // 両サイドの固定追従広告を表示するか
+}
+
+const { 
+  title, 
+  description = "AstroとVanilla JSで構築された、超軽量で高速なブラウザミニゲーム集。アセットの遅延ロードでいつでも瞬時にプレイ可能。", 
+  image = "/images/og-image.webp",
+  sd,
+  lang = "ja",
+  showSideAds = false
+} = Astro.props;
+
+// 本番ドメインを正しく指すキャノニカルURL
+const canonicalURL = new URL(Astro.url.pathname, 'https://mini.7colorsgame.com');
+const isEnglishPath = Astro.url.pathname === '/en/' || Astro.url.pathname.startsWith('/en/');
+const japanesePath = isEnglishPath ? (Astro.url.pathname.slice(3) || '/') : Astro.url.pathname;
+const englishPath = isEnglishPath ? Astro.url.pathname : (Astro.url.pathname === '/' ? '/en/' : `/en${Astro.url.pathname}`);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- 多言語SEO alternate タグ -->
+    <link rel="alternate" hreflang="ja" href={new URL(japanesePath, 'https://mini.7colorsgame.com')} />
+    <link rel="alternate" hreflang="en" href={new URL(englishPath, 'https://mini.7colorsgame.com')} />
+    <link rel="alternate" hreflang="x-default" href={new URL(japanesePath, 'https://mini.7colorsgame.com')} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+
+    <!-- Title -->
+    <title>{title} | Antigravity Games</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- AdSense本体はページ内で一度だけ読み込む -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8654623397015129" crossorigin="anonymous" is:inline></script>
+
+    <!-- 構造化データ (JSON-LD) 動的注入スロット -->
+    {sd && <script type="application/ld+json" is:inline set:html={sd}></script>}
+  </head>
+  <body class="bg-brand-dark text-slate-100 min-h-screen flex flex-col font-sans antialiased relative overflow-x-hidden">
+    <!-- 背景オーロラ・グローエフェクト -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-slate-950">
+      <div class="absolute -top-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-brand-primary/10 blur-[150px] animate-aurora-slow"></div>
+      <div class="absolute -bottom-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-brand-accent/10 blur-[150px] animate-aurora-reverse"></div>
+      <div class="absolute top-[30%] left-[50%] -translate-x-1/2 w-[60%] h-[60%] rounded-full bg-fuchsia-500/5 blur-[180px] animate-aurora-alternate"></div>
+    </div>
+
+    <!-- コンテンツレイヤー -->
+    <div class="relative z-10 min-h-screen flex flex-col">
+      <Header lang={lang} />
+      <main class="flex-grow">
+        <slot />
+      </main>
+      <Footer lang={lang} />
+    </div>
+
+    {showSideAds && (
+      <>
+        <!-- 左側の固定追従広告 -->
+        <div class="fixed-ad-left">
+          <!-- CLS回避用プレースホルダー -->
+          <div class="absolute inset-0 bg-slate-950/20 rounded-2xl flex flex-col items-center justify-center select-none pointer-events-none border border-dashed border-slate-800/40 m-1.5">
+            <span class="text-[9px] text-slate-600 uppercase tracking-widest font-extrabold mb-1">Ad</span>
+          </div>
+          <!-- Google AdSense 広告タグ -->
+          <ins class="adsbygoogle"
+            style="display:block; text-align:center;"
+            data-ad-client="ca-pub-8654623397015129"
+            data-ad-slot="1005373448"
+            data-ad-format="vertical"
+            data-full-width-responsive="true"
+            aria-label="Advertisement"></ins>
+        </div>
+
+        <!-- 右側の固定追従広告 -->
+        <div class="fixed-ad-right">
+          <!-- CLS回避用プレースホルダー -->
+          <div class="absolute inset-0 bg-slate-950/20 rounded-2xl flex flex-col items-center justify-center select-none pointer-events-none border border-dashed border-slate-800/40 m-1.5">
+            <span class="text-[9px] text-slate-600 uppercase tracking-widest font-extrabold mb-1">Ad</span>
+          </div>
+          <!-- Google AdSense 広告タグ -->
+          <ins class="adsbygoogle"
+            style="display:block; text-align:center;"
+            data-ad-client="ca-pub-8654623397015129"
+            data-ad-slot="1005373448"
+            data-ad-format="vertical"
+            data-full-width-responsive="true"
+            aria-label="Advertisement"></ins>
+        </div>
+
+        <script is:inline>
+          (() => {
+            const sideAds = Array.from(document.querySelectorAll('.fixed-ad-left ins.adsbygoogle, .fixed-ad-right ins.adsbygoogle'));
+            const wideScreen = window.matchMedia('(min-width: 1640px)');
+
+            const initializeSideAds = () => {
+              if (!wideScreen.matches) return;
+              requestAnimationFrame(() => {
+                sideAds.forEach((ad) => {
+                  if (!(ad instanceof HTMLElement) || ad.dataset.adsbygoogleStatus || ad.getBoundingClientRect().width <= 0) return;
+                  try {
+                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+                  } catch (error) {
+                    console.warn('AdSense side slot initialization was deferred.', error);
+                  }
+                });
+              });
+            };
+
+            initializeSideAds();
+            wideScreen.addEventListener('change', initializeSideAds);
+          })();
+        </script>
+      </>
+    )}
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --font-outfit: 'Outfit', sans-serif;
+    --font-sans: 'Plus Jakarta Sans', sans-serif;
+  }
+  body {
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-outfit);
+  }
+  
+  /* スクロールバー */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #030712;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 9999px;
+    border: 2px solid #030712;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #38bdf8;
+  }
+
+  /* テキスト選択 */
+  ::selection {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+  }
+
+  /* オーロラアニメーション */
+  @keyframes aurora {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+    }
+    33% {
+      transform: translate(10%, 8%) scale(1.1) rotate(120deg);
+    }
+    66% {
+      transform: translate(-5%, -10%) scale(0.9) rotate(240deg);
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(360deg);
+    }
+  }
+
+  @keyframes aurora-rev {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(360deg);
+    }
+    50% {
+      transform: translate(-10%, 15%) scale(1.2) rotate(180deg);
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+    }
+  }
+
+  .animate-aurora-slow {
+    animation: aurora 40s infinite linear;
+  }
+
+  .animate-aurora-reverse {
+    animation: aurora-rev 45s infinite linear;
+  }
+
+  .animate-aurora-alternate {
+    animation: aurora 50s infinite alternate ease-in-out;
+  }
+
+  /* ==========================================
+  両サイド固定追従広告
+  ========================================== */
+  .fixed-ad-left {
+    position: fixed;
+    top: 120px;                     /* ビューポート上部からの固定位置 */
+    right: calc(50% + 660px);       /* 画面中央(50%) + メイン幅の半分(640px) + 余白(20px) */
+    width: 160px;                   /* 広告枠の横幅 */
+    height: 600px;                  /* 広告枠の縦幅 */
+    z-index: 50;                    /* 前面へ配置 */
+    display: none;                  /* 初期状態は非表示 */
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(30, 41, 59, 0.8);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .fixed-ad-right {
+    position: fixed;
+    top: 120px;                     /* ビューポート上部からの固定位置 */
+    left: calc(50% + 660px);        /* 画面中央(50%) + メイン幅の半分(640px) + 余白(20px) */
+    width: 160px;                   /* 広告枠の横幅 */
+    height: 600px;                  /* 広告枠の縦幅 */
+    z-index: 50;                    /* 前面へ配置 */
+    display: none;                  /* 初期状態は非表示 */
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(30, 41, 59, 0.8);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  /* モニターの横幅が十分広い時（1640px以上）のみ表示を許可 */
+  @media (min-width: 1640px) {
+    .fixed-ad-left,
+    .fixed-ad-right {
+      display: block;
+    }
+  }
+
+  /* モバイル・タブレットなどの狭い画面（992px以下）では確実に強制非表示 */
+  @media (max-width: 992px) {
+    .fixed-ad-left,
+    .fixed-ad-right {
+      display: none;
+    }
+  }
+</style>

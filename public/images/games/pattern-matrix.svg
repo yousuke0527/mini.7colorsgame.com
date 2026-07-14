@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- Background -->
+  <rect width="400" height="250" fill="url(#bg-grad)" />
+
+  <!-- Outer Border -->
+  <rect x="20" y="20" width="360" height="210" rx="12" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.25" />
+
+  <!-- Background HUD rings -->
+  <circle cx="200" cy="95" r="75" fill="none" stroke="#a855f7" stroke-width="1.5" opacity="0.08" />
+
+  <!-- 3x3 Grid Layout -->
+  <!-- Cell width=32, height=32, spacing=10 -->
+  <!-- Coordinates:
+      Col 1: x=144, Col 2: x=184, Col 3: x=224
+      Row 1: y=39,  Row 2: y=79,  Row 3: y=119
+  -->
+
+  <!-- ROW 1 -->
+  <!-- (1,1) Triangle UP -->
+  <g transform="translate(144, 39)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <polygon points="16,6 6,24 26,24" fill="none" stroke="#22d3ee" stroke-width="2" filter="url(#glow)" />
+  </g>
+  <!-- (1,2) Triangle RIGHT -->
+  <g transform="translate(184, 39)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <polygon points="26,16 8,6 8,26" fill="none" stroke="#22d3ee" stroke-width="2" filter="url(#glow)" />
+  </g>
+  <!-- (1,3) Triangle DOWN -->
+  <g transform="translate(224, 39)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <polygon points="16,26 6,8 26,8" fill="none" stroke="#22d3ee" stroke-width="2" filter="url(#glow)" />
+  </g>
+
+  <!-- ROW 2 -->
+  <!-- (2,1) Square -->
+  <g transform="translate(144, 79)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <rect x="7" y="7" width="18" height="18" fill="none" stroke="#eab308" stroke-width="2" filter="url(#glow)" />
+  </g>
+  <!-- (2,2) Square inside Circle -->
+  <g transform="translate(184, 79)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <circle cx="16" cy="16" r="10" fill="none" stroke="#eab308" stroke-width="1.5" filter="url(#glow)" />
+    <rect x="10" y="10" width="12" height="12" fill="none" stroke="#eab308" stroke-width="1.5" filter="url(#glow)" />
+  </g>
+  <!-- (2,3) Circle with Dot -->
+  <g transform="translate(224, 79)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <circle cx="16" cy="16" r="10" fill="none" stroke="#eab308" stroke-width="2" filter="url(#glow)" />
+    <circle cx="16" cy="16" r="2" fill="#eab308" filter="url(#glow)"/>
+  </g>
+
+  <!-- ROW 3 -->
+  <!-- (3,1) Diagonal line -->
+  <g transform="translate(144, 119)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <line x1="6" y1="26" x2="26" y2="6" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+  </g>
+  <!-- (3,2) X Cross -->
+  <g transform="translate(184, 119)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <line x1="6" y1="6" x2="26" y2="26" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+    <line x1="6" y1="26" x2="26" y2="6" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+  </g>
+  <!-- (3,3) Multi Cross (Star) -->
+  <g transform="translate(224, 119)">
+    <rect width="32" height="32" rx="5" fill="#0f172a" stroke="#a855f7" stroke-width="1.5" filter="url(#glow)"/>
+    <line x1="6" y1="16" x2="26" y2="16" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+    <line x1="16" y1="6" x2="16" y2="26" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+    <line x1="9" y1="9" x2="23" y2="23" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+    <line x1="9" y1="23" x2="23" y2="9" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+  </g>
+
+  <!-- Title Indicator -->
+  <text x="200" y="167" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="bold" fill="#94a3b8" text-anchor="middle" letter-spacing="3">IQ PATTERN SOLVER</text>
+
+  <!-- タイトル -->
+  
+  <!-- カテゴリバッジ -->
+  <rect x="150" y="210" width="100" height="18" rx="9" fill="#a855f7" opacity="0.2"/>
+</svg>

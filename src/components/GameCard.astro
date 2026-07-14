@@ -1,0 +1,134 @@
+---
+import { simpleGameDescription, simpleGameTitle } from '../lib/gameCopy';
+
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  category: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  platform: 'PC' | 'All';
+  lang?: string;
+  publishDate?: string;
+  featured?: boolean;
+}
+
+const {
+  id,
+  title,
+  description,
+  thumbnail,
+  category,
+  difficulty,
+  platform,
+  lang = 'ja',
+  publishDate,
+  featured = false,
+} = Astro.props;
+
+const displayTitle = simpleGameTitle(title, lang, id);
+const displayDescription = simpleGameDescription(id, description, lang);
+const displayCategory = lang === 'en'
+  ? (/action|arcade|shoot|sports|runner|アクション|シューティング/i.test(category) ? 'Action'
+    : /card|board|table|casino|カード|ボード|テーブル/i.test(category) ? 'Board & Cards'
+    : /brain|memory|math|word|typing|脳|記憶|計算|言葉/i.test(category) ? 'Brain Game'
+    : 'Puzzle')
+  : category;
+const playHref = lang === 'en' ? `/en/play/${id}/` : `/play/${id}/`;
+const isNew = publishDate
+  ? Date.now() - new Date(publishDate).getTime() < 45 * 24 * 60 * 60 * 1000
+  : false;
+const difficultyLabel = {
+  Easy: lang === 'en' ? 'Easy' : 'かんたん',
+  Medium: lang === 'en' ? 'Medium' : 'ふつう',
+  Hard: lang === 'en' ? 'Hard' : 'むずかしい',
+}[difficulty];
+const difficultyColors = {
+  Easy: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300',
+  Medium: 'border-amber-400/40 bg-amber-400/10 text-amber-300',
+  Hard: 'border-rose-400/40 bg-rose-400/10 text-rose-300',
+};
+---
+
+<article
+  data-category={category}
+  data-difficulty={difficulty}
+  class:list={[
+    'game-card-inner group relative flex h-full flex-col overflow-hidden rounded-[26px] border bg-[#071027]/90 transition duration-300 hover:-translate-y-2',
+    featured ? 'border-fuchsia-400/60 shadow-[0_20px_70px_rgba(217,70,239,.2)]' : 'border-cyan-400/20 hover:border-cyan-300/60 shadow-[0_18px_50px_rgba(1,8,30,.7)]',
+  ]}
+>
+  <div class="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_70%_0%,rgba(34,211,238,.18),transparent_42%)]"></div>
+
+  <a href={playHref} data-game-link={id} class="relative block aspect-[16/10] overflow-hidden bg-[#030712]">
+    <img
+      src={thumbnail}
+      alt={`${displayTitle}のゲーム画面`}
+      loading="lazy"
+      decoding="async"
+      class="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-[#071027] via-transparent to-transparent"></div>
+    {isNew && (
+      <span class="new-ribbon absolute -left-10 top-4 z-20 w-36 -rotate-45 py-1.5 text-center text-xs font-black tracking-[.16em] text-white">
+        NEW
+      </span>
+    )}
+    <span
+      data-clear-label={id}
+      class="clear-ribbon absolute -right-10 bottom-4 z-20 hidden w-36 -rotate-45 items-center justify-center py-1.5 text-xs font-black tracking-[.16em] text-white"
+    >
+      CLEAR
+    </span>
+    <button
+      data-fav-btn={id}
+      type="button"
+      class="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-[#020617]/75 text-lg text-white/70 backdrop-blur-md transition hover:scale-110 hover:text-rose-400"
+      title={lang === 'en' ? 'Add to favorites' : 'お気に入りに追加'}
+      aria-label={lang === 'en' ? 'Add to favorites' : 'お気に入りに追加'}
+    >♡</button>
+  </a>
+
+  <div class="relative z-10 flex flex-1 flex-col p-5 sm:p-6">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-2">
+        <span class="max-w-[9rem] truncate rounded-full border border-cyan-300/25 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-black text-cyan-200">
+          {displayCategory}
+        </span>
+        <span class={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black ${difficultyColors[difficulty]}`}>
+          {difficultyLabel}
+        </span>
+      </div>
+      <span class="text-[10px] font-bold text-slate-500">
+        {platform === 'PC' ? (lang === 'en' ? 'PC' : 'PC向け') : (lang === 'en' ? 'PC & Mobile' : 'スマホOK')}
+      </span>
+    </div>
+
+    <h3 class="mb-2 text-xl font-black tracking-tight text-white transition group-hover:text-cyan-300">
+      <a href={playHref} data-game-link={id}>{displayTitle}</a>
+    </h3>
+    <p class="mb-6 line-clamp-2 min-h-[3.25rem] text-sm font-medium leading-relaxed text-slate-300">
+      {displayDescription}
+    </p>
+    <a
+      href={playHref}
+      data-game-link={id}
+      class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-fuchsia-600 via-violet-600 to-cyan-500 px-4 py-3 text-sm font-black text-white shadow-[0_0_25px_rgba(124,58,237,.28)] transition hover:brightness-125"
+    >
+      {lang === 'en' ? 'Play now' : '今すぐあそぶ'}
+      <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
+    </a>
+  </div>
+</article>
+
+<style>
+  .new-ribbon {
+    background: linear-gradient(90deg, #ff2f75, #ec4899 55%, #a855f7);
+    box-shadow: 0 6px 18px rgba(236, 72, 153, .5), 0 0 0 1px rgba(255,255,255,.28) inset;
+  }
+  .clear-ribbon {
+    background: linear-gradient(90deg, #059669, #10b981 55%, #22d3ee);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, .5), 0 0 0 1px rgba(255,255,255,.28) inset;
+  }
+</style>

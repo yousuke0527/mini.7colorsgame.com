@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- Background -->
+  <rect width="400" height="250" fill="url(#bg-grad)" />
+
+  <!-- Cybernetic Grid -->
+  <g opacity="0.05">
+    <path d="M 15 45 L 385 45 M 15 80 L 385 80 M 15 115 L 385 115 M 15 150 L 385 150 M 15 185 L 385 185" stroke="#ffffff" stroke-width="1" />
+    <path d="M 50 15 L 50 235 M 100 15 L 100 235 M 150 15 L 150 235 M 200 15 L 200 235 M 250 15 L 250 235 M 300 15 L 300 235 M 350 15 L 350 235" stroke="#ffffff" stroke-width="1" />
+  </g>
+
+  <!-- Outer Card Border with Rose Glow -->
+  <rect x="15" y="15" width="370" height="220" rx="16" fill="none" stroke="#ff007f" stroke-width="1.5" opacity="0.3" filter="url(#glow)" />
+
+  <!-- Parallel Cyber Floors/Ceilings (Cyan) -->
+  <g filter="url(#glow)">
+    <!-- Ceiling Grid Track -->
+    <rect x="15" y="32" width="370" height="15" fill="#0ea5e9" fill-opacity="0.1" stroke="#00f0ff" filter="url(#glow)" stroke-width="2.5" />
+    <line x1="15" y1="42" x2="385" y2="42" stroke="#ffffff" stroke-width="1" opacity="0.7" />
+    
+    <!-- Floor Grid Track -->
+    <rect x="15" y="163" width="370" height="15" fill="#0ea5e9" fill-opacity="0.1" stroke="#00f0ff" filter="url(#glow)" stroke-width="2.5" />
+    <line x1="15" y1="168" x2="385" y2="168" stroke="#ffffff" stroke-width="1" opacity="0.7" />
+  </g>
+
+  <!-- Red Laser Walls (Obstacles) -->
+  <g filter="url(#glow)">
+    <!-- Full laser beam wall -->
+    <line x1="280" y1="47" x2="280" y2="163" stroke="#ff007f" filter="url(#glow)" stroke-width="4.5" stroke-linecap="round" />
+    <line x1="280" y1="47" x2="280" y2="163" stroke="#ffffff" stroke-width="1.5" />
+    
+    <!-- Warning Laser Shield Emitters -->
+    <rect x="274" y="42" width="12" height="8" rx="2" fill="#090d16" stroke="#ff007f" filter="url(#glow)" stroke-width="2" />
+    <rect x="274" y="160" width="12" height="8" rx="2" fill="#090d16" stroke="#ff007f" filter="url(#glow)" stroke-width="2" />
+    
+    <!-- Skull / Hazard Warning Sign near the beam -->
+    <g transform="translate(290, 95)" opacity="0.8">
+      <polygon points="0,0 20,-10 20,10" fill="#ff007f" />
+      <text x="17" y="3" font-family="'Outfit', sans-serif" font-size="8" font-weight="extrabold" fill="#ffffff" text-anchor="middle">!</text>
+    </g>
+
+    <!-- Partial Hanging Laser Obstacle -->
+    <line x1="120" y1="163" x2="120" y2="115" stroke="#ff007f" filter="url(#glow)" stroke-width="3" stroke-linecap="round" />
+    <line x1="120" y1="163" x2="120" y2="115" stroke="#ffffff" stroke-width="1" />
+    <rect x="115" y="160" width="10" height="7" rx="1.5" fill="#090d16" stroke="#ff007f" filter="url(#glow)" stroke-width="1.5" />
+  </g>
+
+  <!-- Gravity Flip Runner Silhouette (Upside down on ceiling!) -->
+  <g transform="translate(10, 0)">
+    <!-- Cyan Motion/Speed Trails (glowing horizontally) -->
+    <g stroke="#00f0ff" stroke-linecap="round" opacity="0.7" filter="url(#glow)">
+      <line x1="70" y1="72" x2="110" y2="72" stroke-width="1.5" stroke-dasharray="8,4" />
+      <line x1="85" y1="88" x2="130" y2="88" stroke-width="2" stroke-dasharray="12,6" />
+      <line x1="60" y1="100" x2="95" y2="100" stroke-width="1" />
+    </g>
+
+    <!-- Running Character Outline (Upside Down, Left-to-Right stance) -->
+    <!-- Torso (slanted) -->
+    <path d="M 140 76 L 155 86" stroke="#ff007f" stroke-width="5" stroke-linecap="round" filter="url(#glow)" />
+    <!-- Glowing Chest Core -->
+    <circle cx="145" cy="79" r="1.5" fill="#ffffff" />
+    
+    <!-- Helmet / Head (hanging down) -->
+    <circle cx="134" cy="70" r="7.5" fill="#090d16" stroke="#ff007f" stroke-width="2" filter="url(#glow)" />
+    <!-- Visor -->
+    <path d="M 129 70 A 5 5 0 0 0 139 70" fill="none" stroke="#ffffff" stroke-width="2" filter="url(#glow)" />
+
+    <!-- Arms pumping -->
+    <path d="M 140 76 L 148 70 L 158 72" fill="none" stroke="#00f0ff" filter="url(#glow)" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M 140 76 L 128 85 L 122 82" fill="none" stroke="#00f0ff" filter="url(#glow)" stroke-width="2.5" stroke-linecap="round" opacity="0.7" />
+
+    <!-- Legs running upside down (touching ceiling at y=47) -->
+    <!-- Front Leg: Bent forward, touching ceiling -->
+    <path d="M 155 86 L 165 72 L 158 47" fill="none" stroke="#ff007f" stroke-width="4" stroke-linecap="round" filter="url(#glow)" />
+    <!-- Back Leg: Pushing off -->
+    <path d="M 155 86 L 172 90 L 175 62 L 168 53" fill="none" stroke="#ff007f" stroke-width="3" stroke-linecap="round" filter="url(#glow)" opacity="0.8" />
+  </g>
+
+  <!-- Gravity Inversion Shockwaves -->
+  <g stroke="#ffffff" fill="none" stroke-linecap="round" opacity="0.3" filter="url(#glow)">
+    <path d="M 115 75 Q 105 105 115 135" stroke-width="1.5" />
+    <path d="M 105 85 Q 98 105 105 125" stroke-width="1" />
+  </g>
+
+  <!-- Title -->
+  
+  <!-- Category Badge -->
+  <rect x="150" y="210" width="100" height="18" rx="9" fill="#ff007f" opacity="0.2"/>
+</svg>

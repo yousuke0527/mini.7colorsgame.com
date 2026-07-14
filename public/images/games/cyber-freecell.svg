@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+  <!-- Free cells & foundations outline -->
+  <g fill="none" stroke="#334155" stroke-width="2">
+    <!-- Free Cells -->
+    <rect x="100" y="50" width="60" height="90" rx="5" />
+    <rect x="170" y="50" width="60" height="90" rx="5" />
+    <!-- Foundations -->
+    <rect x="570" y="50" width="60" height="90" rx="5" />
+    <rect x="640" y="50" width="60" height="90" rx="5" />
+  </g>
+  <!-- Card in Freecell (Cyan) -->
+  <rect x="170" y="50" width="60" height="90" rx="5" fill="#083344" stroke="#06b6d4" stroke-width="2.5" filter="url(#glowCyan)" />
+  <text x="180" y="75" font-family="Outfit, sans-serif" font-weight="bold" font-size="18" fill="#06b6d4" filter="url(#glowCyan)">A</text>
+  <text x="200" y="105" font-family="Outfit, sans-serif" font-weight="bold" font-size="28" fill="#06b6d4" filter="url(#glowCyan)" text-anchor="middle">♠</text>
+  <!-- Card in Foundation (Fuchsia) -->
+  <rect x="570" y="50" width="60" height="90" rx="5" fill="#1e1b4b" stroke="#d946ef" stroke-width="2.5" filter="url(#glowFuchsia)" />
+  <text x="580" y="75" font-family="Outfit, sans-serif" font-weight="bold" font-size="18" fill="#d946ef" filter="url(#glowFuchsia)">K</text>
+  <text x="600" y="105" font-family="Outfit, sans-serif" font-weight="bold" font-size="28" fill="#d946ef" filter="url(#glowFuchsia)" text-anchor="middle">♦</text>
+  <!-- Columns -->
+  <g fill="#0f172a" stroke="#1e293b" stroke-width="2">
+    <rect x="250" y="180" width="60" height="90" rx="5" />
+    <rect x="330" y="180" width="60" height="90" rx="5" />
+    <rect x="410" y="180" width="60" height="90" rx="5" />
+    <rect x="490" y="180" width="60" height="90" rx="5" />
+  </g>
+  <!-- Stacked cards -->
+  <rect x="330" y="180" width="60" height="90" rx="5" fill="#083344" stroke="#06b6d4" stroke-width="2" />
+  <rect x="330" y="210" width="60" height="90" rx="5" fill="#1e1b4b" stroke="#d946ef" stroke-width="2" />
+  <text x="340" y="235" font-family="Outfit, sans-serif" font-weight="bold" font-size="14" fill="#d946ef">10</text>
+  <text x="360" y="260" font-family="Outfit, sans-serif" font-weight="bold" font-size="20" fill="#d946ef" text-anchor="middle">♥</text>
+</svg>

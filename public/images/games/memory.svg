@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- 背景グラデーション -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070714" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#140c1e" />
+    </linearGradient>
+    <!-- コーナーネオン漏れ光 -->
+    <radialGradient id="cyanLeak" cx="0%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="magentaLeak" cx="100%" cy="0%" r="60%">
+      <stop offset="0%" stop-color="#ff007f" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+    </radialGradient>
+    <!-- ネオングロー効果 -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="3" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="250" fill="url(#bgGrad)" />
+  
+  <!-- コーナー発光オーラ -->
+  <rect width="400" height="250" fill="url(#cyanLeak)" pointer-events-none="true" />
+  <rect width="400" height="250" fill="url(#magentaLeak)" pointer-events-none="true" />
+
+  <!-- 3Dパースペクティブグリッド（遠近感のある電脳空間） -->
+  <g stroke="#1e293b" stroke-width="0.75" opacity="0.35">
+    <!-- 地平線 -->
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" />
+    <!-- 消失点(200, 120)に向かうパースライン -->
+    <line x1="-100" y1="250" x2="200" y2="120" />
+    <line x1="-20" y1="250" x2="200" y2="120" />
+    <line x1="60" y1="250" x2="200" y2="120" />
+    <line x1="130" y1="250" x2="200" y2="120" />
+    <line x1="200" y1="250" x2="200" y2="120" />
+    <line x1="270" y1="250" x2="200" y2="120" />
+    <line x1="340" y1="250" x2="200" y2="120" />
+    <line x1="420" y1="250" x2="200" y2="120" />
+    <line x1="500" y1="250" x2="200" y2="120" />
+    
+    <!-- 横方向のグリッド間隔 (手前ほど広く) -->
+    <line x1="0" y1="130" x2="400" y2="130" />
+    <line x1="0" y1="145" x2="400" y2="145" />
+    <line x1="0" y1="165" x2="400" y2="165" />
+    <line x1="0" y1="190" x2="400" y2="190" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+  </g>
+  
+  <!-- 外枠ボーダー -->
+  <rect width="400" height="250" fill="none" stroke="#334155" stroke-width="2" />
+  
+
+  <!-- 背景 -->
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+
+  <!-- グリッド -->
+  <g stroke="#1e293b" stroke-width="1" opacity="0.3">
+    <line x1="100" y1="0" x2="100" y2="450" />
+    <line x1="200" y1="0" x2="200" y2="450" />
+    <line x1="300" y1="0" x2="300" y2="450" />
+    <line x1="400" y1="0" x2="400" y2="450" />
+    <line x1="500" y1="0" x2="500" y2="450" />
+    <line x1="600" y1="0" x2="600" y2="450" />
+    <line x1="700" y1="0" x2="700" y2="450" />
+    
+    <line x1="0" y1="90" x2="800" y2="90" />
+    <line x1="0" y1="180" x2="800" y2="180" />
+    <line x1="0" y1="270" x2="800" y2="270" />
+    <line x1="0" y1="360" x2="800" y2="360" />
+  </g>
+
+  <!-- カードのレイアウト -->
+  <!-- 伏せられたカード (パープル) -->
+  <rect x="180" y="60" width="80" height="110" rx="8" fill="#1e1b4b" stroke="#4f46e5" stroke-width="2" />
+  <path d="M 205,95 L 235,135 M 235,95 L 205,135" stroke="#4f46e5" stroke-width="2" opacity="0.6" />
+
+  <rect x="290" y="60" width="80" height="110" rx="8" fill="#1e1b4b" stroke="#4f46e5" stroke-width="2" />
+  <circle cx="330" cy="115" r="15" fill="none" stroke="#4f46e5" stroke-width="2" opacity="0.6" />
+
+  <rect x="400" y="60" width="80" height="110" rx="8" fill="#1e1b4b" stroke="#4f46e5" stroke-width="2" />
+  <rect x="425" y="95" width="30" height="40" rx="4" fill="none" stroke="#4f46e5" stroke-width="2" opacity="0.6" />
+
+  <rect x="510" y="60" width="80" height="110" rx="8" fill="#1e1b4b" stroke="#4f46e5" stroke-width="2" />
+
+  <!-- 開かれたペア（揃った状態！エメラルド） -->
+  <g filter="url(#glowEmerald)">
+    <rect x="230" y="190" width="80" height="110" rx="8" fill="#022c22" stroke="#39ff14" filter="url(#glow)" stroke-width="3" />
+    <!-- 揃ったマーク: サイバー六角形 -->
+    <polygon points="270,225 292,237 292,263 270,275 248,263 248,237" fill="none" stroke="#39ff14" filter="url(#glow)" stroke-width="3" />
+    <circle cx="270" cy="250" r="4" fill="#39ff14" />
+  </g>
+
+  <g filter="url(#glowEmerald)">
+    <rect x="460" y="190" width="80" height="110" rx="8" fill="#022c22" stroke="#39ff14" filter="url(#glow)" stroke-width="3" />
+    <!-- 揃ったマーク: サイバー六角形 -->
+    <polygon points="500,225 522,237 522,263 500,275 478,263 478,237" fill="none" stroke="#39ff14" filter="url(#glow)" stroke-width="3" />
+    <circle cx="500" cy="250" r="4" fill="#39ff14" />
+  </g>
+  
+  <!-- 揃った時のレーザー接続線 -->
+  <line x1="310" y1="245" x2="460" y2="245" stroke="#39ff14" stroke-width="2" stroke-dasharray="8,4" filter="url(#glowEmerald)" />
+
+  <!-- 装飾テキスト -->
+</svg>
